@@ -37,10 +37,10 @@ public class PrintingDataController : ControllerBase {
             // TODO: check if template && lib files exists
 
             //var result = SendXlsx2PrinterByInterop(outputPath, invoice.PrinterName);
-			return Ok();
+            return Ok();
 
             //if (result.Trim() == "")
-             //   return Ok();
+            //   return Ok();
             //return StatusCode(StatusCodes.Status500InternalServerError, result);
 
         } catch (Exception e) {
@@ -48,6 +48,11 @@ public class PrintingDataController : ControllerBase {
         }
     }
 
+
+    [HttpGet(Name = "Test")]
+    public dynamic Get() {
+        return Ok("Success");
+    }
 
     private string SendXlsx2PrinterByInterop(string filePath, string? printerName) {
         string result = "";
