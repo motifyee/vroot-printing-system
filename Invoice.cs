@@ -44,7 +44,13 @@ namespace TodoApi {
             return val;
         }
         private int sumCount(List<Item> list) {
-            return list.Aggregate(0, (p, c) => p + parseint(c.Count ?? ""));
+            // return list.Aggregate(0, (p, c) => p + parseint(c.Count ?? ""));
+            int res = 0;
+            foreach (var item in list)
+                res += parseint(item.Count ?? "0");
+
+            return res;
+
         }
 
         private List<string> SplitLongValueLines(string value) {
