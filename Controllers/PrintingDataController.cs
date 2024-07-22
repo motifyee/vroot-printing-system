@@ -16,8 +16,13 @@ public class PrintingDataController : ControllerBase {
     _logger = logger;
   }
 
+  [HttpGet(Name = "TestPrintingData")]
+  public dynamic Get() {
+    return Ok("Success");
+  }
+
   [HttpPost(Name = "PostPrintingData")]
-  public dynamic PrintInvoice([FromBody] Invoice invoice) {
+  public dynamic Post([FromBody] Invoice invoice) {
 
     var culture = new CultureInfo("ar-EG");
     var date = DateTime.Parse(invoice.Date);
@@ -63,25 +68,6 @@ public class PrintingDataController : ControllerBase {
       var err = $"message = {e.Message}, stack = {e.StackTrace}";
       return StatusCode(StatusCodes.Status500InternalServerError, err);
     }
-  }
-
-
-  [HttpPost(Name = "PostOpenDrawer")]
-  public dynamic OpenDrawer(string printerName) {
-    const string ESC = "\u001B";
-    const string p = "\u0070";
-    const string m = "\u0000";
-    const string t1 = "\u0025";
-    const string t2 = "\u0250";
-    const string openTillCommand = ESC + p + m + t1 + t2;
-
-    RawPrinterHelper.SendStringToPrinter(printerName, openTillCommand);
-    return Ok();
-  }
-
-  [HttpGet(Name = "Test")]
-  public dynamic Get() {
-    return Ok("Success");
   }
 
   private string SendXlsx2PrinterByInterop(string filePath, string? printerName) {
