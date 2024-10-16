@@ -7,9 +7,9 @@ namespace PrintingApi.Controllers {
     // Structure and API declarions:
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public class DOCINFOA {
-      [MarshalAs(UnmanagedType.LPStr)] public string pDocName;
-      [MarshalAs(UnmanagedType.LPStr)] public string pOutputFile;
-      [MarshalAs(UnmanagedType.LPStr)] public string pDataType;
+      [MarshalAs(UnmanagedType.LPStr)] public string? pDocName;
+      [MarshalAs(UnmanagedType.LPStr)] public string? pOutputFile;
+      [MarshalAs(UnmanagedType.LPStr)] public string? pDataType;
     }
 
     [DllImport("winspool.Drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Ansi,
