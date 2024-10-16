@@ -3,31 +3,33 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TodoApi
-{
-    public class Invoice
-    { //: IParsable<Invoice>
-        private const int MaxLineLength = 35;
-        public string? PrinterName { get; set; }
-        public string? TemplateName { get; set; }
+namespace PrintingApi {
 
-        public string? Company { get; set; }
-        public string? Cashier { get; set; }
-        public string? Branch { get; set; }
-        public string? BranchDesc { get; set; }
+  public class Invoice {//: IParsable<Invoice>
+    private const int MaxLineLength = 35;
+    public string? PrinterName { get; set; }
+    public string? TemplateName { get; set; }
 
-        public string? Date { get; set; }
-        public string? Time { get; set; }
+    public string? Company { get; set; }
+    public string? Cashier { get; set; }
+    public string? Branch { get; set; }
+    public string? BranchDesc { get; set; }
 
-        public string? InvoiceNo { get; set; }
 
-        public string? InvoiceType { get; set; }
+    public string? Date { get; set; }
+    public string? Time { get; set; }
 
-        public string? ClientName { get; set; }
-        public string? ClientPhone1 { get; set; }
-        public string? ClientPhone2 { get; set; }
-        public string? ClientAddress { get; set; }
-        public string? ClientArea { get; set; }
+    public string? InvoiceNo { get; set; }
+
+    public string? InvoiceType { get; set; }
+
+
+    public string? ClientName { get; set; }
+    public string? ClientPhone1 { get; set; }
+    public string? ClientPhone2 { get; set; }
+    public string? ClientAddress { get; set; }
+    public string? ClientArea { get; set; }
+
 
         // uses reflection to retrieve a self-value by name
         private string? GetValue(string propertyName)
@@ -125,7 +127,7 @@ namespace TodoApi
                     continue;
                 }
 
-                var lines = SplitLongValueLines(value);
+        var lines = SplitLongValueLines(value);
 
                 // TODO_BESAFE if sent is null
                 for (var i = 0; i < lines.Count; i++)
@@ -157,9 +159,9 @@ namespace TodoApi
                     { "ClientArea", "منطقة" }
                 };
 
-                return GetPropertyListEntries(properties, new List<string> { "ClientAddress" });
-            }
-        }
+        return GetPropertyListEntries(properties, new List<string> { "ClientAddress" });
+      }
+    }
 
         public string? DeliveryName { get; set; }
         public string? DeliveryNameTitle
@@ -178,15 +180,12 @@ namespace TodoApi
             }
         }
 
-        public List<Entry> ItemsInfo
-        {
-            get
-            {
-                var entries = new List<Entry>();
+    public List<Entry> ItemsInfo {
+      get {
+        var entries = new List<Entry>();
 
-                foreach (var item in Items)
-                {
-                    var lines = SplitLongValueLines(item?.Title ?? "");
+        foreach (var item in Items) {
+          var lines = SplitLongValueLines(item?.Title ?? "");
 
                     // TODO_BESAFE if sent is null
                     for (var i = 0; i < lines.Count; i++)
@@ -207,9 +206,9 @@ namespace TodoApi
                     }
                 }
 
-                return entries;
-            }
-        }
+        return entries;
+      }
+    }
 
         public List<Item> EditedItems { get; set; } = new List<Item>();
         public string? EditedItemsCountInfo
@@ -267,9 +266,8 @@ namespace TodoApi
             {
                 var entries = new List<Entry>();
 
-                foreach (var item in OtherKitchensItems)
-                {
-                    var lines = SplitLongValueLines(item?.Title ?? "");
+        foreach (var item in OtherKitchensItems) {
+          var lines = SplitLongValueLines(item?.Title ?? "");
 
                     for (var i = 0; i < lines.Count; i++)
                         entries.Add(
@@ -309,9 +307,9 @@ namespace TodoApi
                     ret.Add(new Entry() { Title = item, });
                 }
 
-                return ret;
-            }
-        }
+        return ret;
+      }
+    }
 
         public string? SectionName { get; set; }
         public string? ScheduleTime { get; set; }

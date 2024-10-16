@@ -4,8 +4,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
-
-namespace TodoApi.Controllers;
+namespace PrintingApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -18,11 +17,8 @@ public class PrintingDataController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet(Name = "TestPrintingData")]
-    public dynamic Get()
-    {
-        return Ok("Printing Data Success");
-    }
+  [HttpGet(Name = "TestPrintingData")]
+  public dynamic Get() => Ok("Printing Data Api Works!");
 
     [HttpPost(Name = "PostPrintingData")]
     public dynamic Post([FromBody] Invoice invoice)
