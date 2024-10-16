@@ -1,7 +1,7 @@
 obj/
 bin/
 
-printer/out/*.xlsx
+printer/out/**/*.xlsx
 
 printer/templates/*.*
 !printer/templates/*.xlsx
