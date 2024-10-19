@@ -61,7 +61,7 @@ namespace PrintingApi.Controllers {
       };
 
       try {
-        Console.WriteLine("creating file: " + @outputPath);
+        Console.WriteLine("creating file: " + @outputfile);
 
         MiniExcel.SaveAsByTemplate(@outputPath, @inputPath, invoice, configuration: config);
 
