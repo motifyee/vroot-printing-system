@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace PrintingApi {
 
   public class Invoice {//: IParsable<Invoice>
-    private const int MaxLineLength = 35;
+    private const int _maxLineLength = 35;
     public int? Status { get; set; }
     public string? PrinterName { get; set; }
     public string? TemplateName { get; set; }
@@ -18,6 +18,8 @@ namespace PrintingApi {
 
     public string? Date { get; set; }
     public string? Time { get; set; }
+
+    public string? ShiftNo { get; set; }
 
     public string? InvoiceNo { get; set; }
 
@@ -76,7 +78,7 @@ namespace PrintingApi {
       // Console.WriteLine(_value);
       // string[] nm = words.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
       foreach (var wd in _value.Split(" ")) {
-        if (!wd.Contains("—") && line.Length + wd.Length <= MaxLineLength) {
+        if (!wd.Contains("—") && line.Length + wd.Length <= _maxLineLength) {
           line += $" {wd.Trim()}";
         } else {
           lines.Add(line.Trim());
