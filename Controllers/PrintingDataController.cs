@@ -1,139 +1,177 @@
-using System;
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
 using Newtonsoft.Json;
-namespace PrintingApi.Controllers {
+using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 
-  [ApiController]
-  [Route("[controller]")]
-  public class PrintingDataController : ControllerBase {
-    private readonly ILogger<PrintingDataController> _logger;
-    private readonly IHostEnvironment _hostEnv;
-    public PrintingDataController(ILogger<PrintingDataController> logger, IHostEnvironment hostEnvironment) {
-      _logger = logger;
-      _hostEnv = hostEnvironment;
+namespace PrintingApi.Controllers;
+
+[ApiController]
+[Route("")]
+public class PrintingDataController(ILogger<PrintingDataController> logger, IHostEnvironment hostEnvironment) : ControllerBase {
+  private readonly ILogger<PrintingDataController> _logger = logger;
+  private readonly IHostEnvironment _hostEnv = hostEnvironment;
+
+  [HttpGet("PrintingData", Name = "TestPrintingData")]
+  public dynamic TestPrintingData() => Ok("Printing Data Api Works!");
+
+  public PrintingSettings? LoadPrintingSettings() {
+    if (!System.IO.File.Exists("printing-settings.json")) return null;
+
+    PrintingSettings? settings;
+    using (StreamReader r = new("printing-settings.json"))
+      settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
+
+    return settings;
+  }
+
+  [HttpPost("PrintingData", Name = "PostPrintingData")]
+  public dynamic PrintInvoice([FromBody] Invoice invoice) {
+    var settings = LoadPrintingSettings();
+    if (!CanPrintInvoice(invoice, settings)) return Ok("Receipt for pending invoice not printed");
+    invoice = ProcessInvoicePrintingSettings(invoice, settings);
+
+    var culture = new CultureInfo("ar-EG");
+    var date = DateTime.Parse(invoice.Date ?? "");
+
+    string year = date.Year.ToString();
+    string month = $"{date.Month.ToString()} — {date.ToString("MMMM", culture)}";
+    string day = $"{date.Day.ToString()} — {date.ToString("dddd", culture)}";
+
+    string outputfile = $"{invoice.Date ?? ""} #{invoice.InvoiceNo} — {Guid.NewGuid()}.xlsx";
+
+    string folderPath = Path.Combine(
+        Environment.CurrentDirectory,
+        "printer",
+        "out",
+        year,
+        month,
+        day,
+        $"فاتورة — {invoice?.InvoiceNo}"
+    );
+    if (!Directory.Exists(folderPath)) {
+      Directory.CreateDirectory(folderPath);
     }
+    string outputPath = Path.Combine(folderPath, outputfile);
 
-    [HttpGet(Name = "TestPrintingData")]
-    public dynamic Get() => Ok("Printing Data Api Works!");
+    string inputPath = Path.Combine(
+        Environment.CurrentDirectory,
+        "printer",
+        "templates",
+        $"{invoice!.TemplateName ?? ""}.xlsx"
+    );
 
-    [HttpPost(Name = "PostPrintingData")]
-    public dynamic Post([FromBody] Invoice invoice) {
-      if (!CanPrintInvoice(invoice)) return Ok("Receipt for pending invoice not printed");
+    var config = new OpenXmlConfiguration() {
+      IgnoreTemplateParameterMissing = true,
+      FillMergedCells = true,
+      EnableWriteNullValueCell = true
+    };
 
-      var culture = new CultureInfo("ar-EG");
-      var date = DateTime.Parse(invoice.Date ?? "");
+    try {
+      _logger.LogInformation("creating file: " + @outputfile);
 
-      string year = date.Year.ToString();
-      string month = $"{date.Month.ToString()} — {date.ToString("MMMM", culture)}";
-      string day = $"{date.Day.ToString()} — {date.ToString("dddd", culture)}";
+      MiniExcel.SaveAsByTemplate(@outputPath, @inputPath, invoice, configuration: config);
 
-      string outputfile = $"{invoice.Date ?? ""} #{invoice.InvoiceNo} — {Guid.NewGuid()}.xlsx";
-
-      string folderPath = Path.Combine(
-          Environment.CurrentDirectory,
-          "printer",
-          "out",
-          year,
-          month,
-          day,
-          $"فاتورة — {invoice?.InvoiceNo}"
-      );
-      if (!Directory.Exists(folderPath)) {
-        Directory.CreateDirectory(folderPath);
-      }
-      string outputPath = Path.Combine(folderPath, outputfile);
-
-      string inputPath = Path.Combine(
-          Environment.CurrentDirectory,
-          "printer",
-          "templates",
-          $"{invoice!.TemplateName ?? ""}.xlsx"
-      );
-
-      var config = new OpenXmlConfiguration() {
-        IgnoreTemplateParameterMissing = true,
-        FillMergedCells = true,
-        EnableWriteNullValueCell = true
-      };
-
-      try {
-        Console.WriteLine("creating file: " + @outputfile);
-
-        MiniExcel.SaveAsByTemplate(@outputPath, @inputPath, invoice, configuration: config);
-
-        // TODO: check if required printer exists otherwise it sends to default
-        // TODO: clean up files after sending to printer
-        // TODO: check if template && lib files exists
+      // TODO: check if required printer exists otherwise it sends to default
+      // TODO: clean up files after sending to printer
+      // TODO: check if template && lib files exists
 
 
-        if (_hostEnv.IsProduction())
-          SendXlsx2PrinterByInterop(outputPath, invoice.PrinterName);
+      if (_hostEnv.IsProduction())
+        SendXlsx2PrinterByInterop(outputPath, invoice.PrinterName);
 
-        return Ok();
-      } catch (Exception e) {
-        Console.WriteLine(e.Message);
-        var err = $"message = {e.Message}, stack = {e.StackTrace}";
-        return StatusCode(StatusCodes.Status500InternalServerError, err);
-      }
-    }
-
-    public bool CanPrintInvoice(Invoice invoice) {
-      if (!System.IO.File.Exists("printing-settings.json")) return true;
-
-      PrintingSettings? settings;
-      using (StreamReader r = new("printing-settings.json"))
-        settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
-
-      if (settings == null) return true;
-
-      if (!settings.PrintReceiptForPendingInvoice && 
-            invoice.InvoiceType.Trim() == "صالة" &&
-            invoice.TemplateName == "receipt" && 
-            invoice.Status == 1
-        )
-        return false;
-
-      return true;
-    }
-
-    public class PrintingSettings {
-      [JsonProperty("print_receipt_for_pending_invoice")]
-      public bool PrintReceiptForPendingInvoice { get; set; } = true;
-    }
-
-    private static string SendXlsx2PrinterByInterop(string filePath, string? printerName) {
-      string result = "";
-      using (var process = new Process()) {
-        var path = Path.GetFullPath(
-            Path.Combine(Environment.CurrentDirectory, "printer", "lib", "printer.exe")
-        );
-        process.StartInfo.FileName = path;
-        process.StartInfo.Arguments = $"\"{filePath}\" \"{printerName}\"";
-        process.StartInfo.CreateNoWindow = true;
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-
-        process.OutputDataReceived += (sender, data) => result += data.Data ?? "";
-        process.ErrorDataReceived += (sender, data) => result += data.Data ?? "";
-        Console.WriteLine("starting to print");
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        do {
-          if (!process.HasExited) {
-            // Refresh the current process property values.
-            process.Refresh();
-            // Console.WriteLine($"exit {process.HasExited}, result: {result}");
-          }
-        } while (!process.WaitForExit(500));
-      }
-      return result;
+      return Ok();
+    } catch (Exception e) {
+      Console.WriteLine(e.Message);
+      var err = $"message = {e.Message}, stack = {e.StackTrace}";
+      return StatusCode(StatusCodes.Status500InternalServerError, err);
     }
   }
 
+  public bool CanPrintInvoice(Invoice invoice, PrintingSettings? settings) {
+    if (settings == null) return true;
+
+    if (!settings.PrintReceiptForPendingInvoice &&
+          invoice?.InvoiceType?.Trim() == "صالة" &&
+          invoice.TemplateName == "receipt" &&
+          invoice.Status == 1
+      )
+      return false;
+
+    return true;
+  }
+
+  public Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
+    if (settings == null) return invoice;
+
+    if (invoice.GlobalPrinter &&
+        invoice.TemplateName == "kitchen" &&
+        !settings.OutputClientInfoForGlobalKitchenPrinter
+      ) {
+      invoice.ClientName = null;
+      invoice.ClientPhone1 = null;
+      invoice.ClientPhone2 = null;
+      invoice.ClientAddress = null;
+      invoice.ClientArea = null;
+    }
+
+    return invoice;
+
+  }
+
+  public class PrintingSettings {
+    [JsonProperty("print_receipt_for_pending_invoice")]
+    public bool PrintReceiptForPendingInvoice { get; set; } = true;
+
+    [JsonProperty("output_client_info_for_global_kitchen_printer")]
+    public bool OutputClientInfoForGlobalKitchenPrinter { get; set; } = true;
+  }
+
+  private static string SendXlsx2PrinterByInterop(string filePath, string? printerName) {
+    string result = "";
+    using (var process = new Process()) {
+      var path = Path.GetFullPath(
+          Path.Combine(Environment.CurrentDirectory, "printer", "lib", "printer.exe")
+      );
+      process.StartInfo.FileName = path;
+      process.StartInfo.Arguments = $"\"{filePath}\" \"{printerName}\"";
+      process.StartInfo.CreateNoWindow = true;
+      process.StartInfo.UseShellExecute = false;
+      process.StartInfo.RedirectStandardOutput = true;
+      process.StartInfo.RedirectStandardError = true;
+
+      process.OutputDataReceived += (sender, data) => result += data.Data ?? "";
+      process.ErrorDataReceived += (sender, data) => result += data.Data ?? "";
+      Console.WriteLine("starting to print");
+      process.Start();
+      process.BeginOutputReadLine();
+      process.BeginErrorReadLine();
+      do {
+        if (!process.HasExited) {
+          // Refresh the current process property values.
+          process.Refresh();
+          // Console.WriteLine($"exit {process.HasExited}, result: {result}");
+        }
+      } while (!process.WaitForExit(500));
+    }
+    return result;
+  }
+
+  [HttpGet("Printers")]
+  public ActionResult GetPrinters() {
+    List<string> printers = [];
+
+    if (!System.Runtime.InteropServices.RuntimeInformation
+                                             .IsOSPlatform(OSPlatform.Windows)) return Ok(printers);
+
+#pragma warning disable CA1416 // Validate platform compatibility
+    foreach (string printer in PrinterSettings.InstalledPrinters) {
+#pragma warning restore CA1416 // Validate platform compatibility
+      printers.Add(printer);
+    }
+    return Ok(printers);
+  }
 }
