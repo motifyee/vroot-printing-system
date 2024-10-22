@@ -15,18 +15,23 @@ public class PrintingDataController(ILogger<PrintingDataController> logger, IHos
   private readonly ILogger<PrintingDataController> _logger = logger;
   private readonly IHostEnvironment _hostEnv = hostEnvironment;
 
+  [HttpGet("Printers")]
+  public ActionResult GetPrinters() {
+    List<string> printers = [];
+
+    if (!System.Runtime.InteropServices.RuntimeInformation
+                                             .IsOSPlatform(OSPlatform.Windows)) return Ok(printers);
+
+#pragma warning disable CA1416 // Validate platform compatibility
+    foreach (string printer in PrinterSettings.InstalledPrinters) {
+#pragma warning restore CA1416 // Validate platform compatibility
+      printers.Add(printer);
+    }
+    return Ok(printers);
+  }
+
   [HttpGet("PrintingData", Name = "TestPrintingData")]
   public dynamic TestPrintingData() => Ok("Printing Data Api Works!");
-
-  public PrintingSettings? LoadPrintingSettings() {
-    if (!System.IO.File.Exists("printing-settings.json")) return null;
-
-    PrintingSettings? settings;
-    using (StreamReader r = new("printing-settings.json"))
-      settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
-
-    return settings;
-  }
 
   [HttpPost("PrintingData", Name = "PostPrintingData")]
   public dynamic PrintInvoice([FromBody] Invoice invoice) {
@@ -91,7 +96,18 @@ public class PrintingDataController(ILogger<PrintingDataController> logger, IHos
     }
   }
 
-  public bool CanPrintInvoice(Invoice invoice, PrintingSettings? settings) {
+
+  public PrintingSettings? LoadPrintingSettings() {
+    if (!System.IO.File.Exists("printing-settings.json")) return null;
+
+    PrintingSettings? settings;
+    using (StreamReader r = new("printing-settings.json"))
+      settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
+
+    return settings;
+  }
+
+  private bool CanPrintInvoice(Invoice invoice, PrintingSettings? settings) {
     if (settings == null) return true;
 
     if (!settings.PrintReceiptForPendingInvoice &&
@@ -104,7 +120,7 @@ public class PrintingDataController(ILogger<PrintingDataController> logger, IHos
     return true;
   }
 
-  public Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
+  private Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
     if (settings == null) return invoice;
 
     if (!invoice.GlobalPrinter &&
@@ -160,18 +176,5 @@ public class PrintingDataController(ILogger<PrintingDataController> logger, IHos
     return result;
   }
 
-  [HttpGet("Printers")]
-  public ActionResult GetPrinters() {
-    List<string> printers = [];
 
-    if (!System.Runtime.InteropServices.RuntimeInformation
-                                             .IsOSPlatform(OSPlatform.Windows)) return Ok(printers);
-
-#pragma warning disable CA1416 // Validate platform compatibility
-    foreach (string printer in PrinterSettings.InstalledPrinters) {
-#pragma warning restore CA1416 // Validate platform compatibility
-      printers.Add(printer);
-    }
-    return Ok(printers);
-  }
 }
