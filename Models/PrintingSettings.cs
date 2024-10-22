@@ -1,0 +1,12 @@
+
+using Newtonsoft.Json;
+
+namespace PrintingApi;
+
+public class PrintingSettings {
+  [JsonProperty("print_receipt_for_pending_invoice")]
+  public bool PrintReceiptForPendingInvoice { get; set; } = true;
+
+  [JsonProperty("output_client_info_for_global_kitchen_printer_only")]
+  public bool OutputClientInfoForGlobalKitchenPrinterOnly { get; set; } = true;
+}
