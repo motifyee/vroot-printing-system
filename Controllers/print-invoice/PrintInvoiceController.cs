@@ -3,8 +3,9 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
+using TemplatePrinting.Models.Invoice;
 
-namespace PrintingApi.Controllers;
+namespace TemplatePrinting.Controllers;
 
 [ApiController]
 [Route("")]

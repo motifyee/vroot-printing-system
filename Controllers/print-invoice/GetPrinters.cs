@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 
-namespace PrintingApi.Controllers;
+namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
 
   [HttpGet("Printers")]

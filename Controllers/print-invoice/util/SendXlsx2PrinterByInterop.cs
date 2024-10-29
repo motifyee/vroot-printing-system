@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PrintingApi.Controllers;
+namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
   private static string SendXlsx2PrinterByInterop(string filePath, string? printerName) {
     string result = "";

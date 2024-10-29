@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace PrintingApi.Controllers {
+namespace TemplatePrinting.Controllers {
   public class RawPrinterHelper {
     // Structure and API declarions:
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]

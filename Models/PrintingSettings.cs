@@ -1,7 +1,7 @@
 
 using Newtonsoft.Json;
 
-namespace PrintingApi;
+namespace TemplatePrinting.Models;
 
 public class PrintingSettings {
   [JsonProperty("print_receipt_for_pending_invoice")]

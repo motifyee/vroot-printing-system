@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace PrintingApi.Controllers {
+namespace TemplatePrinting.Controllers {
 
   [ApiController]
   [Route("[controller]")]

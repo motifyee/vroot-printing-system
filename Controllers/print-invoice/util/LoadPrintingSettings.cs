@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace PrintingApi.Controllers;
+namespace TemplatePrinting.Controllers;
 
 public partial class PrintInvoiceController {
 

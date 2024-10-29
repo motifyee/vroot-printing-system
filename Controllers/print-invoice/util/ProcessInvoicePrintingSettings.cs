@@ -1,7 +1,8 @@
 
-namespace PrintingApi.Controllers;
-public partial class PrintInvoiceController {
+using TemplatePrinting.Models.Invoice;
 
+namespace TemplatePrinting.Controllers;
+public partial class PrintInvoiceController {
   private static Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
     if (settings == null) return invoice;
 
