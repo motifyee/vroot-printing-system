@@ -5,7 +5,7 @@ public partial class PrintInvoiceController {
   private static Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
     if (settings == null) return invoice;
 
-    if (!(invoice.GlobalPrinter??false) &&
+    if (!(invoice.GlobalPrinter ?? false) &&
         invoice.TemplateName == "kitchen" &&
         settings.OutputClientInfoForGlobalKitchenPrinterOnly
       ) {
@@ -15,6 +15,14 @@ public partial class PrintInvoiceController {
       invoice.ClientAddress = null;
       invoice.ClientArea = null;
     }
+
+    if (
+      invoice.EditedItems.Count > 0 &&
+      invoice.GlobalPrinter != true &&
+      invoice.TemplateName == "kitchen" &&
+      !settings.PrintItemsIfEditedForLocalKitchenPrinter
+    )
+      invoice.Items = [];
 
     return invoice;
 

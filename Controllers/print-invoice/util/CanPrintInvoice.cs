@@ -6,11 +6,13 @@ public partial class PrintInvoiceController {
     if (settings == null) return true;
 
     if (!settings.PrintReceiptForPendingInvoice &&
-          invoice?.InvoiceType?.Trim() == "صالة" &&
+          invoice.InvoiceType?.Trim() == "صالة" &&
           invoice.TemplateName == "receipt" &&
           invoice.Status == 1
       )
       return false;
+
+
 
     return true;
   }

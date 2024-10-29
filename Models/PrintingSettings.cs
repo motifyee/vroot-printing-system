@@ -9,4 +9,7 @@ public class PrintingSettings {
 
   [JsonProperty("output_client_info_for_global_kitchen_printer_only")]
   public bool OutputClientInfoForGlobalKitchenPrinterOnly { get; set; } = false;
+
+  [JsonProperty("print_items_if_edited_for_local_kitchen_printer")]
+  public bool PrintItemsIfEditedForLocalKitchenPrinter { get; set; } = false;
 }
