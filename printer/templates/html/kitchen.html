@@ -76,10 +76,10 @@
 
 		<!-- edited items -->
 		{{ if edited_title }}
+
+		<div style="width: 100%; text-align: center">{{ edited_title }}</div>
+
 		<table>
-			<tr>
-				<td colspan="2" rowspan="2">{{ edited_title }}</td>
-			</tr>
 			{{ for item in edited_items }}
 			<tr>
 				<td>{{ item.count }}</td>
