@@ -1,5 +1,7 @@
 {
 	"print_receipt_for_pending_invoice": false,
 	"output_client_info_for_global_kitchen_printer_only": true,
-	"print_items_if_edited_for_local_kitchen_printer": true
+	"print_items_if_edited_for_local_kitchen_printer": true,
+	"use_html_template": true,
+	"use_spire_excel_printer": false
 }

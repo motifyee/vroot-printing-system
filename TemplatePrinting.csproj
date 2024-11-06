@@ -4,7 +4,22 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <!-- <EnableDefaultContentItems>false</EnableDefaultContentItems> -->
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Spire.Pdf">
+      <HintPath>printer\lib\Spire\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.XLS">
+      <HintPath>printer\lib\Spire\Spire.XLS.dll</HintPath>
+    </Reference>
+
+    <None Include="printer/lib/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
@@ -12,6 +27,8 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.10" />
     <PackageReference Include="MiniExcel" Version="1.31.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PuppeteerSharp" Version="20.0.4" />
+    <PackageReference Include="Scriban.Signed" Version="5.11.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="xunit" Version="2.5.1" />
   </ItemGroup>

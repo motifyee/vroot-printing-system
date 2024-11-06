@@ -1,0 +1,30 @@
+body {
+	direction: rtl;
+	border-radius: 5px;
+	font-family: 'Tajawal';
+}
+
+body > div,
+body > table {
+	padding: 5px;
+	margin-bottom: 5px;
+	font-weight: 600;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+	font-weight: 600;
+
+	border-radius: 3px;
+	border-style: hidden; /* hide standard table (collapsed) border */
+	box-shadow: 0 0 0 1px #666; /* this draws the table border  */
+}
+
+td {
+	border: 1px solid black;
+	padding-block: 10px;
+	padding-inline: 5px;
+	text-align: center;
+	border-radius: 2px;
+}

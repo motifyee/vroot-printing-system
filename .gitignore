@@ -1,7 +1,10 @@
 obj/
 bin/
 
-printer/out/**/*.xlsx
+printer/out/**/*.*
 
 printer/templates/*.*
 !printer/templates/*.xlsx
+!printer/templates/*.html
+!printer/templates/*.css
+!printer/templates/*.ttf

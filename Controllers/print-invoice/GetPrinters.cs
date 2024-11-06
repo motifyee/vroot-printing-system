@@ -9,17 +9,13 @@ public partial class PrintInvoiceController {
   public ActionResult GetPrinters() {
     List<string> printers = [];
 
-    if (!System.Runtime.InteropServices.RuntimeInformation
-                                             .IsOSPlatform(OSPlatform.Windows)) return Ok(printers);
+    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      return Ok(printers);
 
 #pragma warning disable CA1416 // Validate platform compatibility
-    foreach (string printer in PrinterSettings.InstalledPrinters) {
-#pragma warning restore CA1416 // Validate platform compatibility
+    foreach (string printer in PrinterSettings.InstalledPrinters)
       printers.Add(printer);
-    }
+
     return Ok(printers);
   }
-
-
-
 }

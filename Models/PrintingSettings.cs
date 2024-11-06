@@ -12,4 +12,10 @@ public class PrintingSettings {
 
   [JsonProperty("print_items_if_edited_for_local_kitchen_printer")]
   public bool PrintItemsIfEditedForLocalKitchenPrinter { get; set; } = false;
+
+  [JsonProperty("use_html_template")]
+  public bool UseHtmlTemplate { get; set; } = false;
+
+  [JsonProperty("use_spire_excel_printer")]
+  public bool UseSpireExcelPrinter { get; set; } = false;
 }
