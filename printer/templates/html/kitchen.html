@@ -80,10 +80,10 @@
 			<tr>
 				<td colspan="2" rowspan="2">{{ edited_title }}</td>
 			</tr>
-			{{ for items in edited_items }}
+			{{ for item in edited_items }}
 			<tr>
-				<td>{{ info.value }}</td>
-				<td class="rtl">{{ info.title }}</td>
+				<td>{{ item.count }}</td>
+				<td class="rtl">{{ item.title }}</td>
 			</tr>
 			{{ end }}
 		</table>
