@@ -16,14 +16,32 @@ public partial class PrintInvoiceController {
     var timer = new PerfTimer("time to load excel file");
     workbook.LoadFromFile(filePath);
 
+    var sheet = workbook.Worksheets[0];
+
     if (printerName != null)
-      workbook.PrintDocument.PrinterSettings.PrinterName = printerName;
-    workbook.PrintDocument.PrinterSettings.PrintRange = PrintRange.Selection;
-    // workbook.PrintDocument.PrinterSettings.PrintToFile = true;
-    // workbook.PrintDocument.PrinterSettings.PrintFileName = "InvoiceTemplate.pdf";
+      workbook.PrintDocument.PrinterSettings.PrinterName = "Microsoft Print to PDF"; // printerName; // "Microsoft Print to PDF";
+
+    workbook.PrintDocument.PrinterSettings.FromPage = 1;
+    workbook.PrintDocument.PrinterSettings.ToPage = 1;
+    workbook.PrintDocument.PrinterSettings.PrintRange = PrintRange.CurrentPage;
+    workbook.PrintDocument.PrinterSettings.DefaultPageSettings.PaperSource.RawKind = (int)PaperSourceKind.Custom;
+
+    var x = workbook.PrintDocument.PrinterSettings.DefaultPageSettings.PaperSource.SourceName;
+    sheet.PageSetup.PaperSize = PaperSizeType.Custom; // new PaperSize(3.14961M, 10);
+    sheet.PageSetup.SetCustomPaperSize(3150, 100);
+    sheet.PageSetup.IsFitToPage = true;
+    sheet.PageSetup.FitToPagesWide = 1;
+
+    workbook.PrintDocument.PrintController = new StandardPrintController();
+    var paperSize = new PaperSize("Custom", 3150, 100) { RawKind = (int)PaperKind.Custom };
+    workbook.PrintDocument.DefaultPageSettings.PaperSize = paperSize;
+
+    workbook.PrintDocument.PrinterSettings.PrintToFile = true;
+    workbook.PrintDocument.PrinterSettings.PrintFileName = "InvoiceTemplate.pdf";
 
     timer.Print("time to print");
-    if (_hostEnv.IsProduction()) workbook.PrintDocument.Print();
+
+    workbook.PrintDocument.Print();
     timer.End();
   }
 }
