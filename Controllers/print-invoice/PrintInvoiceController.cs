@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TemplatePrinting.Models.Invoice;
 using TemplatePrinting.Services;
 
@@ -32,8 +33,10 @@ public partial class PrintInvoiceController(
       // TODO: clean up files after sending to printer
       // TODO: check if template && lib files exists
 
-      if (settings?.UseHtmlTemplate ?? false) return await PrintInvoiceByHtml(invoice);
-      PrintInvoiceByExcel(invoice, _util.PrintingSettings?.UseSpireExcelPrinter ?? false);
+      if (settings?.UseHtmlTemplate ?? false) await PrintInvoiceByHtml(invoice);
+      else PrintInvoiceByExcel(invoice, _util.PrintingSettings?.UseSpireExcelPrinter ?? false);
+
+      SaveAsJson(invoice);
 
       return Ok();
 
@@ -42,5 +45,12 @@ public partial class PrintInvoiceController(
       var err = $"message = {e.Message}, stack = {e.StackTrace}";
       return StatusCode(StatusCodes.Status500InternalServerError, err);
     }
+  }
+
+  private void SaveAsJson(Invoice invoice) {
+    var outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName, "json");
+    var json = JsonConvert.SerializeObject(invoice, Formatting.Indented);
+
+    System.IO.File.WriteAllText(outputFile, json);
   }
 }
