@@ -30,7 +30,7 @@ public partial class Invoice {
         if (item?.Note != null && item?.Note?.Trim().Length > 0) {
           lines = SplitLongValueLines(item?.Note ?? "");
           for (var i = 0; i < lines.Count; i++)
-            entries.Add(new Entry() { Title = $" —{lines[i]}—", });
+            entries.Add(new Entry() { Title = $" — {lines[i]} —", });
         }
       }
 
@@ -63,7 +63,7 @@ public partial class Invoice {
         if (item?.Note != null && item?.Note?.Trim().Length > 0) {
           lines = SplitLongValueLines(item?.Note ?? "");
           for (var i = 0; i < lines.Count; i++)
-            entries.Add(new Entry() { Title = $" —{lines[i]}—", });
+            entries.Add(new Entry() { Title = $" — {lines[i]} —", });
         }
       }
 

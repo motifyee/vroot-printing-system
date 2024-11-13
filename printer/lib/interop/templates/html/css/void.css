@@ -1,0 +1,35 @@
+body > div,
+body > table {
+	/* padding: 5px; */
+	margin-bottom: 10px;
+	box-sizing: content-box;
+}
+* {
+	font-weight: 600;
+	font-family: 'Tajawal';
+	border-radius: 4px !important;
+	border-width: 2px !important;
+	box-sizing: border-box;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+	font-weight: 600;
+
+	border-radius: 3px;
+	border-style: hidden; /* hide standard table (collapsed) border */
+	/* box-shadow: 0 0 0 1px red; */
+}
+
+td {
+	/* border: 1px solid black; */
+	padding-block: 10px;
+	padding-inline: 5px;
+	text-align: center;
+}
+
+.delete-cell {
+	width: 50%;
+	max-width: 50%;
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Test HTML</title>
+		<link rel="stylesheet" href="css/util.css" />
+		<link rel="stylesheet" href="css/fonts.css" />
+		<style>
+			body {
+				font-family: 'Tajawal';
+			}
+			table {
+				border-collapse: collapse;
+				width: 100%;
+				font-weight: 600;
+			}
+			td {
+				border: 1px solid black;
+				padding-block: 10px;
+				padding-inline: 5px;
+				text-align: center;
+				border-radius: 2px;
+			}
+			.rtl {
+				text-align: right;
+				direction: rtl;
+			}
+		</style>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td colspan="7" style="padding-block: 30px">{{ section_name }}</td>
+			</tr>
+
+			<tr>
+				<td colspan="2">Date</td>
+				<td colspan="2">{{ date }}</td>
+				<td colspan="3">{{ time }}</td>
+			</tr>
+
+			<tr>
+				<td colspan="2">User</td>
+				<td colspan="5">{{ cashier }}</td>
+			</tr>
+
+			<tr>
+				<td colspan="3">Order Type</td>
+				<td colspan="4">{{ invoice_type }}</td>
+			</tr>
+
+			<tr>
+				<td colspan="3">Order no.</td>
+				<td colspan="4">{{ invoice_no }}</td>
+			</tr>
+
+			<tr>
+				<td colspan="3">{{ table_title }}</td>
+				<td colspan="4">{{ table_no }}</td>
+			</tr>
+
+			<tr>
+				<td colspan="7"></td>
+			</tr>
+
+			<!-- items -->
+			{{ for item in items }}
+			<tr>
+				<td colspan="1" style="width: 60px; max-width: 60px">
+					{{ item.count }}
+				</td>
+				<td colspan="6" class="rtl">{{ item.title }}</td>
+			</tr>
+			{{ if item.note }}
+			<tr>
+				<td colspan="7" class="rtl" style="font-weight: normal">
+					&#8592; &nbsp;{{ item.note }}
+				</td>
+			</tr>
+			{{ end }} {{ end }}
+		</table>
+
+		<!-- edited items -->
+		{{ if edited_title }}
+
+		<div style="width: 100%; text-align: center">{{ edited_title }}</div>
+
+		<table>
+			{{ for item in edited_items }}
+			<tr>
+				<td style="width: 60px; max-width: 60px">{{ item.count }}</td>
+				<td class="rtl">{{ item.title }}</td>
+			</tr>
+			{{ if item.note }}
+			<tr>
+				<td colspan="7" class="rtl" style="font-weight: normal">
+					&#8592; &nbsp;{{ item.note }}
+				</td>
+			</tr>
+			{{ end }} {{ end }}
+		</table>
+		{{ end }}
+
+		<!-- note -->
+		{{ if note }}
+		<div>{{ note }}</div>
+		{{ end }}
+	</body>
+</html>

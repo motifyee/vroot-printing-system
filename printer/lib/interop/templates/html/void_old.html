@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>void</title>
+
+		<link rel="stylesheet" href="css/util.css" />
+		<link rel="stylesheet" href="css/fonts.css" />
+		<link rel="stylesheet" href="css/void.css" />
+	</head>
+
+	<body>
+		<div
+			class="flex justify-between items-stretch"
+			style="gap: 10px; padding: 0"
+		>
+			<div class="delete-cell">
+				<div class="flex-col" style="gap: 10px">
+					<div class="border-solid w-full center" style="padding-block: 10px">
+						{{ company }}
+					</div>
+					<div class="flex-col border-solid center" style="padding: 10px">
+						<div>Cashier</div>
+						<div>{{ cashier }}</div>
+						<div>{{ branch }}</div>
+					</div>
+				</div>
+			</div>
+			<div class="delete-cell">
+				<div
+					class="border-solid h-full center"
+					style="display: grid; align-items: center"
+				>
+					حذف
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="flex justify-stretch items-stretch w-full"
+			style="min-height: 80px; gap: 10px"
+		>
+			<div class="border-solid flex-1 flex-col center h-full">
+				<div>Kitchen</div>
+				<div>{{ section_name }}</div>
+			</div>
+			<div class="border-solid flex-1 flex-col center h-full">
+				<div>{{ invoice_type }}</div>
+				<div>{{ invoice_no }}</div>
+			</div>
+			<div class="border-solid flex-1 flex-col center h-full">
+				<div>Date</div>
+				<div>{{ date }}</div>
+			</div>
+		</div>
+
+		<!-- items -->
+		<table style="box-shadow: 0 0 0 2px #666">
+			{{ for item in items }}
+			<tr>
+				<td style="width: 10px">{{ item.price }}</td>
+				<td style="width: 40px">{{ item.count }}</td>
+				<td class="right">{{ item.title }}</td>
+			</tr>
+			{{ end }}
+		</table>
+	</body>
+</html>
