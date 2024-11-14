@@ -10,3 +10,5 @@ printer/templates/*.*
 !printer/templates/*.ttf
 
 printer/lib/chrome-headless-shell-win64
+
+.sonarqube
