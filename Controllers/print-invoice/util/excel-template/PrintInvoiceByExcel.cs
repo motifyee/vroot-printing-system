@@ -24,7 +24,7 @@ public partial class PrintInvoiceController {
 
     string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
 
-    _logger.LogInformation("Creating file: " + outputFile + "\n");
+    _logger.LogInformation("Creating file: {outputFile} \n", outputFile);
 
     var timer = new PerfTimer("time to create excel file");
     MiniExcel.SaveAsByTemplate(outputFile, templateFile, invoice, configuration: config);

@@ -6,7 +6,7 @@ public partial class Invoice {
     get {
       if (Items == null || Items!.Count == 0)
         return null;
-      return $"مجموع الأصناف [ {sumCount(Items)} ]";
+      return $"مجموع الأصناف [ {SumCount(Items)} ]";
     }
   }
 
@@ -43,7 +43,7 @@ public partial class Invoice {
     get {
       if (EditedItems == null || EditedItems!.Count == 0)
         return null;
-      return $"مجموع الأصناف المعدلة [ {sumCount(EditedItems)} ]";
+      return $"مجموع الأصناف المعدلة [ {SumCount(EditedItems)} ]";
     }
   }
   public string? EditedTitle {
@@ -76,7 +76,7 @@ public partial class Invoice {
     get {
       if (OtherKitchensItems == null || OtherKitchensItems!.Count == 0)
         return null;
-      return $"مجموع الأصناف الباقية [ {sumCount(OtherKitchensItems)} ]";
+      return $"مجموع الأصناف الباقية [ {SumCount(OtherKitchensItems)} ]";
     }
   }
   public List<Entry> OtherKitchensItemsInfo {

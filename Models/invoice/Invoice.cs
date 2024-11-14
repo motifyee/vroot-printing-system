@@ -46,7 +46,7 @@ namespace TemplatePrinting.Models.Invoice {
 
     public string? Total { get; set; }
 
-    public decimal ItemsTotal => sumTotal(Items);
+    public decimal ItemsTotal => SumTotal(Items);
 
     public decimal ItemsTax14 => decimal.Multiply(ItemsTotal, 0.14M);
 
