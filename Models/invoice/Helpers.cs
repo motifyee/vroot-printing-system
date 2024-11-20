@@ -9,36 +9,34 @@ public partial class Invoice {
     return (string?)info?.GetValue(this, null)?.ToString();
   }
 
-  private int parseint(string str) {
-    int val = 0;
-    Int32.TryParse(str, out val);
+  private static int Parseint(string str) {
+    if (!Int32.TryParse(str, out int val)) return 0;
     return val;
   }
 
-  private decimal parseDecimal(string str) {
-    decimal val = 0M;
-    Decimal.TryParse(str, out val);
+  private static decimal ParseDecimal(string str) {
+    if (!Decimal.TryParse(str, out decimal val)) return 0M;
     return val;
   }
 
-  private int sumCount(List<Item> list) {
+  private static int SumCount(List<Item> list) {
     // return list.Aggregate(0, (p, c) => p + parseint(c.Count ?? ""));
     int res = 0;
     foreach (var item in list)
-      res += parseint(item.Count ?? "0");
+      res += Parseint(item.Count ?? "0");
 
     return res;
   }
 
-  private decimal sumTotal(List<Item> list) {
+  private static decimal SumTotal(List<Item> list) {
     decimal res = 0M;
     foreach (var item in list)
-      res += parseDecimal(item.TotalPrice ?? "0.0");
+      res += ParseDecimal(item.TotalPrice ?? "0.0");
 
     return res;
   }
 
-  private List<string> SplitLongValueLines(string? value) {
+  private static List<string> SplitLongValueLines(string? value) {
     if (value == null || value.Trim().Length == 0)
       return new List<string> { "" };
     var line = "";
@@ -47,7 +45,7 @@ public partial class Invoice {
     // Console.WriteLine(_value);
     // string[] nm = words.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
     foreach (var wd in _value.Split(" ")) {
-      if (!wd.Contains("—") && line.Length + wd.Length <= _maxLineLength) {
+      if (!wd.Contains('—') && line.Length + wd.Length <= _maxLineLength) {
         line += $" {wd.Trim()}";
       } else {
         lines.Add(line.Trim());

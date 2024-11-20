@@ -41,7 +41,7 @@ public partial class PrintInvoiceController(
       return Ok();
 
     } catch (Exception e) {
-      _logger.LogInformation(e.Message);
+      _logger.LogInformation("exception: {Message}", e.Message);
       var err = $"message = {e.Message}, stack = {e.StackTrace}";
       return StatusCode(StatusCodes.Status500InternalServerError, err);
     }

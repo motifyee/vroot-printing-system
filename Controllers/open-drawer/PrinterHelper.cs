@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 namespace TemplatePrinting.Controllers {
-  public class RawPrinterHelper {
+  public partial class RawPrinterHelper {
     // Structure and API declarions:
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public class DOCINFOA {
@@ -12,35 +12,41 @@ namespace TemplatePrinting.Controllers {
       [MarshalAs(UnmanagedType.LPStr)] public string? pDataType;
     }
 
-    [DllImport("winspool.Drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Ansi,
-        ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-    public static extern bool OpenPrinter([MarshalAs(UnmanagedType.LPStr)] string szPrinter, out IntPtr hPrinter,
+    [LibraryImport("winspool.Drv", EntryPoint = "OpenPrinterA", SetLastError = true, StringMarshalling = StringMarshalling.Custom, StringMarshallingCustomType = typeof(System.Runtime.InteropServices.Marshalling.AnsiStringMarshaller))]
+    [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvStdcall) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool OpenPrinter([MarshalAs(UnmanagedType.LPStr)] string szPrinter, out IntPtr hPrinter,
         IntPtr pd);
 
-    [DllImport("winspool.Drv", EntryPoint = "ClosePrinter", SetLastError = true, ExactSpelling = true,
-        CallingConvention = CallingConvention.StdCall)]
-    public static extern bool ClosePrinter(IntPtr hPrinter);
+    [LibraryImport("winspool.Drv", EntryPoint = "ClosePrinter", SetLastError = true)]
+    [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvStdcall) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool ClosePrinter(IntPtr hPrinter);
 
     [DllImport("winspool.Drv", EntryPoint = "StartDocPrinterA", SetLastError = true, CharSet = CharSet.Ansi,
         ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-    public static extern bool StartDocPrinter(IntPtr hPrinter, Int32 level, [In, MarshalAs(UnmanagedType.LPStruct)]
+    private static extern bool StartDocPrinter(IntPtr hPrinter, Int32 level, [In, MarshalAs(UnmanagedType.LPStruct)]
         DOCINFOA di);
 
-    [DllImport("winspool.Drv", EntryPoint = "EndDocPrinter", SetLastError = true, ExactSpelling = true,
-        CallingConvention = CallingConvention.StdCall)]
-    public static extern bool EndDocPrinter(IntPtr hPrinter);
+    [LibraryImport("winspool.Drv", EntryPoint = "EndDocPrinter", SetLastError = true)]
+    [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvStdcall) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool EndDocPrinter(IntPtr hPrinter);
 
-    [DllImport("winspool.Drv", EntryPoint = "StartPagePrinter", SetLastError = true, ExactSpelling = true,
-        CallingConvention = CallingConvention.StdCall)]
-    public static extern bool StartPagePrinter(IntPtr hPrinter);
+    [LibraryImport("winspool.Drv", EntryPoint = "StartPagePrinter", SetLastError = true)]
+    [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvStdcall) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool StartPagePrinter(IntPtr hPrinter);
 
-    [DllImport("winspool.Drv", EntryPoint = "EndPagePrinter", SetLastError = true, ExactSpelling = true,
-        CallingConvention = CallingConvention.StdCall)]
-    public static extern bool EndPagePrinter(IntPtr hPrinter);
+    [LibraryImport("winspool.Drv", EntryPoint = "EndPagePrinter", SetLastError = true)]
+    [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvStdcall) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool EndPagePrinter(IntPtr hPrinter);
 
-    [DllImport("winspool.Drv", EntryPoint = "WritePrinter", SetLastError = true, ExactSpelling = true,
-        CallingConvention = CallingConvention.StdCall)]
-    public static extern bool WritePrinter(IntPtr hPrinter, IntPtr pBytes, Int32 dwCount, out Int32 dwWritten);
+    [LibraryImport("winspool.Drv", EntryPoint = "WritePrinter", SetLastError = true)]
+    [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvStdcall) })]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool WritePrinter(IntPtr hPrinter, IntPtr pBytes, Int32 dwCount, out Int32 dwWritten);
 
     // SendBytesToPrinter()
     // When the function is given a printer name and an unmanaged array

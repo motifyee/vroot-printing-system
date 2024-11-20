@@ -12,3 +12,4 @@ printer/templates/*.*
 printer/lib/chrome-headless-shell-win64
 
 .sonarqube
+.vs
