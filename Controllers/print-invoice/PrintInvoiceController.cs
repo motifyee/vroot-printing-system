@@ -36,7 +36,7 @@ public partial class PrintInvoiceController(
       if (settings?.UseHtmlTemplate ?? false) await PrintInvoiceByHtml(invoice);
       else PrintInvoiceByExcel(invoice, _util.PrintingSettings?.UseSpireExcelPrinter ?? false);
 
-      SaveAsJson(invoice);
+      // SaveAsJson(invoice);
 
       return Ok();
 
