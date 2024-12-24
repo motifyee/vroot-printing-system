@@ -13,8 +13,15 @@ public partial class PrintInvoiceController {
   }
 
   private void SaveAsJson(dynamic invoice) {
-    var date = invoice.GetProperty("CreateDate")?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd");
-    var invoiceNo = invoice.GetProperty("InvoiceId")?.ToString() ?? "0000";
+    string date = DateTime.Now.ToString("yyyy-MM-dd");
+    var invoiceNo = "0000";
+
+    try {
+      date = invoice.GetProperty("createDate")?.ToString() ?? date;
+    } catch (Exception) { }
+    try {
+      invoiceNo = invoice.GetProperty("flagByDateCompany")?.ToString() ?? invoiceNo;
+    } catch (Exception) { }
 
     var outputFile = GetOutputFilePath(date, invoiceNo, "invoice", "json");
 
