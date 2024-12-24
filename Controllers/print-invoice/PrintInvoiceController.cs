@@ -15,9 +15,7 @@ public partial class PrintInvoiceController(
   private readonly ILogger<PrintInvoiceController> _logger = logger;
   private readonly IHostEnvironment _hostEnv = hostEnvironment;
   private readonly IPrintingUtils _util = util;
-  public static string AssemblyPath = Path.GetDirectoryName(
-    System.Reflection.Assembly.GetEntryAssembly()?.Location
-    ) ?? Environment.CurrentDirectory;
+  public static string AssemblyPath = Environment.CurrentDirectory;
 
   [HttpGet("PrintingData", Name = "TestPrintingData")]
   public dynamic TestPrintingData() {
