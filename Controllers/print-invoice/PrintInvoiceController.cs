@@ -15,9 +15,15 @@ public partial class PrintInvoiceController(
   private readonly ILogger<PrintInvoiceController> _logger = logger;
   private readonly IHostEnvironment _hostEnv = hostEnvironment;
   private readonly IPrintingUtils _util = util;
+  public static string AssemblyPath = Path.GetDirectoryName(
+    System.Reflection.Assembly.GetEntryAssembly()?.Location
+    ) ?? Environment.CurrentDirectory;
 
   [HttpGet("PrintingData", Name = "TestPrintingData")]
-  public dynamic TestPrintingData() => Ok("Printing Data Api Works!");
+  public dynamic TestPrintingData() {
+    Console.WriteLine(AssemblyPath);
+    return Ok("Printing Data Api Works!");
+  }
 
   [HttpPost("PrintingData", Name = "PostPrintingData")]
   public async Task<ActionResult> PrintInvoice([FromBody] Invoice invoice) {

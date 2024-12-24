@@ -6,6 +6,7 @@ using TemplatePrinting.Models;
 namespace TemplatePrinting.Services;
 
 public class PrintingUtils() : IPrintingUtils, IDisposable {
+  public string AssemblyPath = System.Reflection.Assembly.GetEntryAssembly()?.Location ?? Environment.CurrentDirectory;
   private static IBrowser? _browser;
 
   public void Setup() {
@@ -44,7 +45,7 @@ public class PrintingUtils() : IPrintingUtils, IDisposable {
         p.Kill();
 
       string execFolder = Path.Combine(
-          Environment.CurrentDirectory,
+          AssemblyPath,
           "printer",
           "lib",
           "chrome-headless-shell-win64"

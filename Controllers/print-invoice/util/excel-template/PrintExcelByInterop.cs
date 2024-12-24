@@ -10,7 +10,7 @@ public partial class PrintInvoiceController {
     string result = "";
     using (var process = new Process()) {
       var path = Path.GetFullPath(
-          Path.Combine(Environment.CurrentDirectory, "printer", "lib", "interop", "printer.exe")
+          Path.Combine(AssemblyPath, "printer", "lib", "interop", "printer.exe")
       );
       process.StartInfo.FileName = path;
       process.StartInfo.Arguments = $"\"{filePath}\" \"{printerName}\"";

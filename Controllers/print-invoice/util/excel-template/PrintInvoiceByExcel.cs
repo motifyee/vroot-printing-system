@@ -15,7 +15,7 @@ public partial class PrintInvoiceController {
     };
 
     string templateFile = Path.Combine(
-        Environment.CurrentDirectory,
+        AssemblyPath,
         "printer",
         "templates",
         "excel",

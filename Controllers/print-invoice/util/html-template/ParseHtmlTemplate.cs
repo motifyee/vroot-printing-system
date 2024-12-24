@@ -7,7 +7,7 @@ public partial class PrintInvoiceController {
 
   private static string ParseHtmlTemplate(Invoice invoice) {
     var templatePath = Path.Combine(
-      Environment.CurrentDirectory,
+      AssemblyPath,
       "printer",
       "templates",
       "html",

@@ -15,7 +15,7 @@ public partial class PrintInvoiceController {
     string fileName = $"{date ?? ""} #{invoiceNo} — {templateName} — {Guid.NewGuid()}.{ext}";
 
     string folderPath = Path.Combine(
-           Environment.CurrentDirectory,
+        AssemblyPath,
            "printer",
            "out",
            year,
