@@ -1,0 +1,148 @@
+using System.Drawing.Printing;
+using System.Runtime.Versioning;
+using TemplatePrinting.Models;
+
+namespace TemplatePrinting.Controllers;
+
+[SupportedOSPlatform("windows")]
+public class PrinterBackgroundService : IDisposable {
+  private readonly IJobCountStrategy _strategy;
+  private readonly List<PrinterWatcher> _watchers = new();
+  private bool _isRunning;
+  private readonly object _lock = new();
+  private int _subscriberCount = 0;
+  private List<PrinterInfo> _printerCache = new();
+
+  public event Action<List<PrinterInfo>>? OnPrintersChanged;
+
+  public PrinterBackgroundService(IJobCountStrategy strategy) {
+    _strategy = strategy;
+  }
+
+  public List<PrinterInfo> GetCachedPrinters() => _printerCache;
+
+  public List<PrinterInfo> Subscribe(Action<List<PrinterInfo>> handler) {
+    lock (_lock) {
+      OnPrintersChanged += handler;
+      _subscriberCount++;
+      if (_subscriberCount == 1) {
+        Start();
+      }
+      return [.. _printerCache];
+    }
+  }
+
+  public void Unsubscribe(Action<List<PrinterInfo>> handler) {
+    lock (_lock) {
+      OnPrintersChanged -= handler;
+      _subscriberCount--;
+      if (_subscriberCount <= 0) {
+        _subscriberCount = 0;
+        Stop();
+      }
+    }
+  }
+
+  public bool IsRunning => _isRunning;
+
+  public void Start() {
+    lock (_lock) {
+      if (_isRunning) return;
+      _isRunning = true;
+    }
+
+    StopInternal(); // Ensure clean state
+
+    try {
+      _printerCache = FetchInitialPrinters();
+      foreach (var info in _printerCache) {
+        var watcher = new PrinterWatcher(info.Name, _strategy);
+        watcher.OnQueueUpdated += HandleQueueUpdated;
+        _watchers.Add(watcher);
+      }
+    } catch (Exception ex) {
+      Console.WriteLine($"Error starting printer watchers: {ex.Message}");
+      Stop();
+    }
+  }
+
+  private List<PrinterInfo> FetchInitialPrinters() {
+    List<PrinterInfo> printers = new();
+    try {
+      // Logic borrowed from GetPrintersData
+      var searcher = new System.Management.ManagementObjectSearcher("SELECT * FROM Win32_Printer");
+      var wmiPrinters = searcher.Get().Cast<System.Management.ManagementObject>().ToDictionary(
+          x => x["Name"]?.ToString() ?? "",
+          x => x
+      );
+
+      foreach (string printerName in PrinterSettings.InstalledPrinters) {
+        var settings = new PrinterSettings { PrinterName = printerName };
+        var info = new PrinterInfo {
+          Name = printerName,
+          IsDefault = settings.IsDefaultPrinter,
+          IsValid = settings.IsValid,
+          SupportsColor = settings.SupportsColor,
+          MaxCopies = settings.MaximumCopies,
+          Duplex = settings.Duplex.ToString(),
+          IsPlotter = settings.IsPlotter,
+          PaperSizes = settings.PaperSizes.Cast<PaperSize>().Select(x => x.PaperName).ToList(),
+          Resolutions = settings.PrinterResolutions.Cast<PrinterResolution>().Select(x => x.ToString()).ToList(),
+          JobCount = _strategy.GetJobCount(printerName)
+        };
+
+        if (wmiPrinters.TryGetValue(printerName, out var mo)) {
+          info.FullName = mo["Caption"]?.ToString() ?? printerName;
+          info.PortName = mo["PortName"]?.ToString() ?? "";
+          info.DriverName = mo["DriverName"]?.ToString() ?? "";
+          info.Location = mo["Location"]?.ToString() ?? "";
+          info.IsShared = (bool)(mo["Shared"] ?? false);
+          info.ShareName = mo["ShareName"]?.ToString() ?? "";
+          info.IsNetwork = (bool)(mo["Network"] ?? false);
+          info.IsOffline = (bool)(mo["WorkOffline"] ?? false);
+          info.Status = mo["Status"]?.ToString() ?? "";
+        }
+        printers.Add(info);
+      }
+    } catch (Exception ex) {
+      Console.WriteLine($"Error fetching initial printer list: {ex.Message}");
+    }
+    return printers;
+  }
+
+  private void HandleQueueUpdated(string name, int count) {
+    lock (_lock) {
+      var printer = _printerCache.FirstOrDefault(p => p.Name == name);
+      if (printer != null) {
+        printer.JobCount = count;
+        OnPrintersChanged?.Invoke(new List<PrinterInfo>(_printerCache));
+      }
+    }
+    Console.WriteLine($"Printer {name} now has {count} jobs.");
+  }
+
+  public void Stop() {
+    lock (_lock) {
+      if (!_isRunning) return;
+      _isRunning = false;
+    }
+    StopInternal();
+  }
+
+  private void StopInternal() {
+    foreach (var watcher in _watchers) {
+      watcher.OnQueueUpdated -= HandleQueueUpdated;
+      watcher.Dispose();
+    }
+    _watchers.Clear();
+  }
+
+  public void Restart() {
+    Stop();
+    Start();
+  }
+
+  public void Dispose() {
+    Stop();
+  }
+}

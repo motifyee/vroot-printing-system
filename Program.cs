@@ -1,3 +1,5 @@
+using Microsoft.Extensions.FileProviders;
+using TemplatePrinting.Controllers;
 using TemplatePrinting.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,13 @@ builder.Services.AddCors(options => {
 });
 
 builder.Services.AddSingleton<IPrintingUtils>(new PrintingUtils());
+// builder.Services.AddSingleton<IJobCountStrategy, ManagedJobCountStrategy>();
+builder.Services.AddSingleton<IJobCountStrategy, NativeJobCountStrategy>();
+
+if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) {
+  builder.Services.AddSingleton<PrinterBackgroundService>();
+}
+
 var app = builder.Build();
 
 var utils = app.Services.GetRequiredService<IPrintingUtils>();
@@ -31,9 +40,48 @@ if (app.Environment.IsDevelopment()) {
   app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Removed to avoid potential redirect loops locally
 
 app.UseCors(Origins);
+
+// Middleware to handle case-insensitive static file requests on Linux
+app.Use(async (context, next) => {
+  var path = context.Request.Path.Value;
+  if (!string.IsNullOrEmpty(path) && path != "/") {
+    var webRoot = app.Environment.WebRootPath;
+    var relativePath = path.TrimStart('/');
+    var fullPath = Path.Combine(webRoot, relativePath);
+
+    // If file/directory doesn't exist with exact casing, try case-insensitive match
+    if (!File.Exists(fullPath) && !Directory.Exists(fullPath)) {
+      var parts = relativePath.Split('/');
+      var currentPath = webRoot;
+      var foundMatch = true;
+
+      foreach (var part in parts) {
+        if (string.IsNullOrEmpty(part)) continue;
+        var match = Directory.GetFileSystemEntries(currentPath)
+            .FirstOrDefault(e => string.Equals(Path.GetFileName(e), part, StringComparison.OrdinalIgnoreCase));
+
+        if (match != null) {
+          currentPath = match;
+        } else {
+          foundMatch = false;
+          break;
+        }
+      }
+
+      if (foundMatch) {
+        var newPath = "/" + Path.GetRelativePath(webRoot, currentPath).Replace("\\", "/");
+        context.Request.Path = newPath;
+      }
+    }
+  }
+  await next();
+});
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseAuthorization();
 

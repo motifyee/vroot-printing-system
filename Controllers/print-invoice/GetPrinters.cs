@@ -1,73 +1,66 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
 using System.Runtime.InteropServices;
-using System.Text;
 using TemplatePrinting.Models;
-using System.Management;
 
 namespace TemplatePrinting.Controllers;
 
 public partial class PrintInvoiceController {
 
-  [HttpGet("Printers")]
-  public ActionResult GetPrinters() {
-    var path = Path.Combine(Environment.CurrentDirectory, "Views", "Printers", "index.html");
-    if (!System.IO.File.Exists(path)) return NotFound("View not found");
-
-    var html = System.IO.File.ReadAllText(path);
-    return Content(html, "text/html", Encoding.UTF8);
-  }
-
   [HttpGet("Printers/Data")]
-  public ActionResult GetPrintersData() {
-    List<PrinterInfo> printers = [];
+  public async Task GetPrintersData() {
+    Response.Headers.Append("Content-Type", "text/event-stream");
+    Response.Headers.Append("Cache-Control", "no-cache");
+    Response.Headers.Append("Connection", "keep-alive");
 
-    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-      return BadRequest("Printer information collection via PrinterSettings/WMI is only supported on Windows systems.");
-
-#pragma warning disable CA1416 // Validate platform compatibility
-    try {
-      // Use WMI for detailed technical info
-      var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Printer");
-      var wmiPrinters = searcher.Get().Cast<ManagementObject>().ToDictionary(
-          x => x["Name"]?.ToString() ?? "",
-          x => x
-      );
-
-      foreach (string printerName in PrinterSettings.InstalledPrinters) {
-        var settings = new PrinterSettings { PrinterName = printerName };
-        var info = new PrinterInfo {
-          Name = printerName,
-          IsDefault = settings.IsDefaultPrinter,
-          IsValid = settings.IsValid,
-          SupportsColor = settings.SupportsColor,
-          MaxCopies = settings.MaximumCopies,
-          Duplex = settings.Duplex.ToString(),
-          IsPlotter = settings.IsPlotter,
-          PaperSizes = settings.PaperSizes.Cast<PaperSize>().Select(x => x.PaperName).ToList(),
-          Resolutions = settings.PrinterResolutions.Cast<PrinterResolution>().Select(x => x.ToString()).ToList()
-        };
-
-        if (wmiPrinters.TryGetValue(printerName, out var mo)) {
-          info.FullName = mo["Caption"]?.ToString() ?? printerName;
-          info.PortName = mo["PortName"]?.ToString() ?? "";
-          info.DriverName = mo["DriverName"]?.ToString() ?? "";
-          info.Location = mo["Location"]?.ToString() ?? "";
-          info.IsShared = (bool)(mo["Shared"] ?? false);
-          info.ShareName = mo["ShareName"]?.ToString() ?? "";
-          info.IsNetwork = (bool)(mo["Network"] ?? false);
-          info.IsOffline = (bool)(mo["WorkOffline"] ?? false);
-          info.Status = mo["Status"]?.ToString() ?? "";
-          // info.JobCount is usually not available simple like this in WMI Win32_Printer directly without Win32_PrintJob
-        }
-
-        printers.Add(info);
-      }
-    } catch (Exception ex) {
-      _logger.LogError(ex, "Error fetching printer details");
+    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+      var errorJson = System.Text.Json.JsonSerializer.Serialize(new { error = "Printer information collection is only supported on Windows systems." });
+      await Response.WriteAsync($"data: {errorJson}\n\n");
+      await Response.Body.FlushAsync();
+      return;
     }
 
-    return Ok(printers);
+    var printerService = HttpContext.RequestServices.GetService<PrinterBackgroundService>();
+    if (printerService == null) {
+      Response.StatusCode = 500;
+      await Response.WriteAsync("Printer service not available");
+      return;
+    }
+
+    var tcs = new TaskCompletionSource<bool>();
+    var semaphore = new SemaphoreSlim(1, 1);
+
+    Action<List<PrinterInfo>> onPrintersChanged = async (printers) => {
+      await semaphore.WaitAsync();
+      try {
+        var json = System.Text.Json.JsonSerializer.Serialize(printers);
+        await Response.WriteAsync($"data: {json}\n\n");
+        await Response.Body.FlushAsync();
+      } catch {
+        tcs.TrySetResult(true);
+      } finally {
+        semaphore.Release();
+      }
+    };
+
+    // Subscribe and get initial data atomicaly relative to background updates
+    var initialPrinters = printerService.Subscribe(onPrintersChanged);
+
+    await semaphore.WaitAsync();
+    try {
+      var initialJson = System.Text.Json.JsonSerializer.Serialize(initialPrinters);
+      await Response.WriteAsync($"data: {initialJson}\n\n");
+      await Response.Body.FlushAsync();
+    } finally {
+      semaphore.Release();
+    }
+
+    try {
+      await tcs.Task.WaitAsync(HttpContext.RequestAborted);
+    } catch (OperationCanceledException) {
+      // Client disconnected
+    } finally {
+      printerService.Unsubscribe(onPrintersChanged);
+    }
   }
 
   [HttpGet("Printers/Dummy")]

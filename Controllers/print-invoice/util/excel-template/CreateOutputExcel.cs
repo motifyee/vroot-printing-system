@@ -1,7 +1,6 @@
 using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
 using MiniExcelLibs.Picture;
-using TemplatePrinting.Models;
 using TemplatePrinting.Models.Invoice;
 
 namespace TemplatePrinting.Controllers;

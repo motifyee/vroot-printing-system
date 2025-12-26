@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Printer Inventory</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="/printers/index.css" />
+	</head>
+	<body>
+		<div class="header">
+			<h1>Network & System Printers</h1>
+			<p style="color: var(--text-dim)">
+				Detailed diagnostics for all connected output devices
+			</p>
+		</div>
+		<div class="container" id="printerContainer">
+			<!-- Skeleton Loaders -->
+			<div class="card">
+				<div class="card-title">
+					<div class="skeleton skeleton-text"></div>
+					<div class="skeleton skeleton-pill"></div>
+				</div>
+				<div class="spec-grid">
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+				</div>
+			</div>
+			<!-- (More skeletons could be added here) -->
+		</div>
+
+		<script src="/printers/index.js"></script>
+	</body>
+</html>
