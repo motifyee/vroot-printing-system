@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Printer Inventory</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				--bg: #03060b;
+				--card-bg: #0d1117;
+				--accent: #2f81f7;
+				--text-main: #e6edf3;
+				--text-dim: #8b949e;
+				--border: #30363d;
+				--success: #3fb950;
+				--error: #f85149;
+				--shimmer: linear-gradient(
+					90deg,
+					#161b22 25%,
+					#21262d 50%,
+					#161b22 75%
+				);
+			}
+			body {
+				font-family: 'Inter', sans-serif;
+				background-color: var(--bg);
+				color: var(--text-main);
+				margin: 0;
+				padding: 3rem 1.5rem;
+				line-height: 1.5;
+			}
+			.header {
+				max-width: 1100px;
+				margin: 0 auto 3rem auto;
+				text-align: left;
+			}
+			h1 {
+				font-size: 2.25rem;
+				font-weight: 700;
+				margin: 0;
+				background: linear-gradient(90deg, #fff, var(--text-dim));
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+			.container {
+				max-width: 1100px;
+				margin: 0 auto;
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+				gap: 1.5rem;
+			}
+			.card {
+				background: var(--card-bg);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				padding: 1.5rem;
+				display: flex;
+				flex-direction: column;
+				transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1), border-color 0.2s;
+				animation: fadeIn 0.4s ease-out;
+			}
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			.card:hover {
+				transform: translateY(-4px);
+				border-color: var(--accent);
+			}
+			.card-title {
+				font-size: 1.125rem;
+				font-weight: 600;
+				margin-bottom: 1rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				color: #fff;
+			}
+			.status-pill {
+				font-size: 0.75rem;
+				padding: 0.125rem 0.5rem;
+				border-radius: 9999px;
+				font-weight: 500;
+			}
+			.status-default {
+				background: rgba(63, 185, 80, 0.15);
+				color: var(--success);
+			}
+			.status-valid {
+				background: rgba(47, 129, 247, 0.1);
+				color: var(--accent);
+			}
+			.status-invalid {
+				background: rgba(248, 81, 73, 0.1);
+				color: var(--error);
+			}
+
+			.spec-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1rem;
+				font-size: 0.875rem;
+			}
+			.spec-item {
+				display: flex;
+				flex-direction: column;
+				gap: 0.25rem;
+			}
+			.spec-label {
+				color: var(--text-dim);
+				font-size: 0.75rem;
+				text-transform: uppercase;
+				letter-spacing: 0.025em;
+			}
+			.spec-value {
+				font-weight: 500;
+			}
+
+			.tag-container {
+				margin-top: 1.25rem;
+				padding-top: 1.25rem;
+				border-top: 1px solid var(--border);
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin-top: 0.5rem;
+			}
+			.tag {
+				background: #161b22;
+				border: 1px solid var(--border);
+				padding: 0.125rem 0.5rem;
+				border-radius: 4px;
+				font-size: 0.75rem;
+				color: var(--text-dim);
+			}
+
+			/* Skeleton States */
+			.skeleton {
+				background: var(--shimmer);
+				background-size: 200% 100%;
+				animation: shimmer 1.5s infinite;
+				border-radius: 4px;
+			}
+			@keyframes shimmer {
+				0% {
+					background-position: 200% 0;
+				}
+				100% {
+					background-position: -200% 0;
+				}
+			}
+			.skeleton-text {
+				height: 1.2rem;
+				margin-bottom: 0.5rem;
+				width: 60%;
+			}
+			.skeleton-pill {
+				height: 1.5rem;
+				width: 60px;
+				border-radius: 999px;
+			}
+			.skeleton-spec {
+				height: 1rem;
+				width: 80%;
+				margin-top: 0.4rem;
+			}
+			.skeleton-tag {
+				height: 1.5rem;
+				width: 40px;
+			}
+
+			.error-state {
+				grid-column: 1 / -1;
+				padding: 4rem;
+				text-align: center;
+				border: 1px dashed var(--error);
+				border-radius: 12px;
+				background: rgba(248, 81, 73, 0.05);
+			}
+			.btn-retry {
+				margin-top: 1rem;
+				background: var(--accent);
+				color: white;
+				border: none;
+				padding: 0.5rem 1.5rem;
+				border-radius: 6px;
+				cursor: pointer;
+				font-weight: 600;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<h1>Network & System Printers</h1>
+			<p style="color: var(--text-dim)">
+				Detailed diagnostics for all connected output devices
+			</p>
+		</div>
+		<div class="container" id="printerContainer">
+			<!-- Skeleton Loaders -->
+			<div class="card">
+				<div class="card-title">
+					<div class="skeleton skeleton-text"></div>
+					<div class="skeleton skeleton-pill"></div>
+				</div>
+				<div class="spec-grid">
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+					<div class="spec-item">
+						<div class="skeleton-text" style="width: 40px"></div>
+						<div class="skeleton-spec"></div>
+					</div>
+				</div>
+			</div>
+			<!-- (More skeletons could be added here) -->
+		</div>
+
+		<script>
+			async function fetchPrinters() {
+				const container = document.getElementById('printerContainer');
+				try {
+					const response = await fetch('/Printers/Dummy');
+					if (!response.ok) throw new Error('Failed to fetch printers');
+
+					const printers = await response.json();
+
+					if (printers.length === 0) {
+						container.innerHTML = `
+                        <div class="error-state">
+                            <h3>No Printers Found</h3>
+                            <p>No installed printers were detected on this system.</p>
+                        </div>`;
+						return;
+					}
+
+					container.innerHTML = printers
+						.map(
+							p => `
+                    <div class="card">
+                        <div class="card-title">
+                            <span title="${p.fullName}">${p.name}</span>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
+                                ${
+																	p.isDefault
+																		? '<span class="status-pill status-default">Default</span>'
+																		: ''
+																}
+                                ${
+																	p.isNetwork
+																		? '<span class="status-pill" style="background: rgba(139, 148, 158, 0.1); color: var(--text-dim);">Network</span>'
+																		: ''
+																}
+                                ${
+																	p.isOffline
+																		? '<span class="status-pill status-invalid">Offline</span>'
+																		: p.isValid
+																		? '<span class="status-pill status-valid">Online</span>'
+																		: '<span class="status-pill status-invalid">Invalid</span>'
+																}
+                            </div>
+                        </div>
+
+                        <div class="spec-grid" style="grid-template-columns: 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+                            <div class="spec-item">
+                                <span class="spec-label">Connection & Location</span>
+                                <span class="spec-value" style="font-size: 0.8rem; color: #fff;">${
+																	p.portName || 'Unknown Port'
+																} — ${p.location || 'No Location'}</span>
+                            </div>
+                        </div>
+
+                        <div class="spec-grid">
+                            <div class="spec-item">
+                                <span class="spec-label">Driver</span>
+                                <span class="spec-value">${
+																	p.driverName || 'Generic'
+																}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Jobs</span>
+                                <span class="spec-value">${
+																	p.jobCount
+																} Active</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Color</span>
+                                <span class="spec-value">${
+																	p.supportsColor ? 'Supported' : 'B&W Only'
+																}</span>
+                            </div>
+                             <div class="spec-item">
+                                <span class="spec-label">Max Copies</span>
+                                <span class="spec-value">${p.maxCopies}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Duplex</span>
+                                <span class="spec-value">${p.duplex}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Is Shared</span>
+                                <span class="spec-value">${
+																	p.isShared ? `Yes (${p.shareName})` : 'No'
+																}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="spec-label">Capabilities</span>
+                            <div class="tags">
+                                ${p.paperSizes
+																	.slice(0, 5)
+																	.map(
+																		size => `<span class="tag">${size}</span>`
+																	)
+																	.join('')}
+                                ${
+																	p.paperSizes.length > 5
+																		? `<span class="tag" title="${p.paperSizes
+																				.slice(5)
+																				.join(', ')}">+ ${
+																				p.paperSizes.length - 5
+																		  } more</span>`
+																		: ''
+																}
+                            </div>
+                        </div>
+                    </div>
+                `
+						)
+						.join('');
+				} catch (err) {
+					container.innerHTML = `
+                    <div class="error-state">
+                        <h3 style="color: var(--error)">Error Loading Data</h3>
+                        <p>${err.message}</p>
+                        <button class="btn-retry" onclick="fetchPrinters()">Retry Connection</button>
+                    </div>`;
+				}
+			}
+
+			// Initial fetch
+			setTimeout(fetchPrinters, 800); // Small delay to show shimmer effect
+		</script>
+	</body>
+</html>
