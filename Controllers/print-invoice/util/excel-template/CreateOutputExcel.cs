@@ -8,7 +8,7 @@ namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
 
 
-  private void CreateOutputExcel(string outputFilePath, string templateFile, Invoice invoice) {
+  private void CreateOutputExcel(string outputFilePath, string templateFile, object data) {
     _logger.LogInformation("Creating file: {outputFile} \n", outputFilePath);
 
     var config = new OpenXmlConfiguration() {
@@ -17,23 +17,14 @@ public partial class PrintInvoiceController {
       EnableWriteNullValueCell = true,
     };
 
-    var templateWatcher = System.Diagnostics.Stopwatch.StartNew();
-    MiniExcel.SaveAsByTemplate(outputFilePath, templateFile, invoice, configuration: config);
-    templateWatcher.Stop();
-    _logger.LogInformation("Time to create excel file: {time} \n", templateWatcher.Elapsed);
-
-    var logoWatcher = System.Diagnostics.Stopwatch.StartNew();
-    var logoAdded = AddLogo(outputFilePath, invoice.LogoImage ?? "print_stamp.png");
-    logoWatcher.Stop();
-    if (invoice.LogoImage != null || logoAdded)
-      _logger.LogInformation("Time to add logo: {time} \n", logoWatcher.Elapsed);
+    MiniExcel.SaveAsByTemplate(outputFilePath, templateFile, data, configuration: config);
 
     _logger.LogInformation("Excel file created: {outputFile} \n", outputFilePath);
   }
 
   // add logo image
-  private bool AddLogo(string outputFilePath, string logoImage) {
-    var logoRowIndex = GetLastDataRowIndex(outputFilePath) + 2;
+  private bool AddLogo(string outputFilePath, string logoImage, string? cellAddress = null) {
+    var _cellAddress = cellAddress ?? $"A{GetLastDataRowIndex(outputFilePath) + 2}";
     string imageFile = Path.Combine(
                 Environment.CurrentDirectory,
                 "printer",
@@ -49,7 +40,7 @@ public partial class PrintInvoiceController {
     MiniExcel.AddPicture(outputFilePath, new MiniExcelPicture {
       ImageBytes = System.IO.File.ReadAllBytes(imageFile),
       PictureType = "image/png",
-      CellAddress = $"A{logoRowIndex}",
+      CellAddress = _cellAddress,
       WidthPx = 320,
     });
 

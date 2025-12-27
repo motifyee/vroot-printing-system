@@ -80,7 +80,9 @@ function createPrinterCardContent(p) {
 			</div>
 		</div>
 		
-		<div class="tag-container">
+		</div>
+		
+		<div class="tag-container" style="margin-bottom: 1.25rem;">
 			<span class="spec-label">Capabilities</span>
 			<div class="tags">
 				${p.paperSizes
@@ -96,7 +98,46 @@ function createPrinterCardContent(p) {
 				}
 			</div>
 		</div>
+
+		<button class="btn-test-print" onclick="testPrinter('${p.name.replace(
+			/'/g,
+			"\\'"
+		)}', this)">
+			<div class="spinner"></div>
+			<span class="btn-text">Test Paper</span>
+		</button>
 	`;
+}
+
+async function testPrinter(printerName, btn) {
+	if (btn.classList.contains('loading')) return;
+
+	btn.classList.add('loading');
+	btn.disabled = true;
+
+	try {
+		const response = await fetch('/Printers/Test', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ printerName }),
+		});
+
+		const result = await response.json();
+
+		if (response.ok) {
+			showToast(`✨ ${result.message}`);
+		} else {
+			showToast(`❌ Error: ${result.error || 'Failed to print test page'}`);
+		}
+	} catch (err) {
+		console.error('Test print failed:', err);
+		showToast('❌ Connection error. Failed to reach the server.');
+	} finally {
+		btn.classList.remove('loading');
+		btn.disabled = false;
+	}
 }
 
 function updatePrinterUI(printers) {

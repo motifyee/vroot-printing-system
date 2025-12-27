@@ -185,6 +185,58 @@ h1 {
 	font-weight: 600;
 }
 
+.btn-test-print {
+	margin-top: auto;
+	background: transparent;
+	border: 1px solid var(--border);
+	color: var(--text-main);
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 0.8125rem;
+	transition: all 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.btn-test-print:hover {
+	border-color: var(--accent);
+	background: rgba(47, 129, 247, 0.1);
+}
+
+.btn-test-print:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-test-print .spinner {
+	display: none;
+	width: 12px;
+	height: 12px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+.btn-test-print.loading .spinner {
+	display: block;
+}
+
+.btn-test-print.loading .btn-text {
+	opacity: 0.7;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 /* Updated Highlight & Toaster Styles */
 .card.updated-highlight {
 	position: relative;

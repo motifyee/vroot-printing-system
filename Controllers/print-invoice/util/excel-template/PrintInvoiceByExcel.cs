@@ -1,7 +1,4 @@
 
-using MiniExcelLibs;
-using MiniExcelLibs.OpenXml;
-using TemplatePrinting.Models;
 using TemplatePrinting.Models.Invoice;
 
 namespace TemplatePrinting.Controllers;
@@ -21,6 +18,7 @@ public partial class PrintInvoiceController {
     string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
 
     CreateOutputExcel(outputFile, templateFile, invoice);
+    AddLogo(outputFile, invoice.LogoImage ?? "print_stamp.png");
 
     if (!_hostEnv.IsProduction()) return;
 
