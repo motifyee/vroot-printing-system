@@ -14,7 +14,7 @@ public partial class PrintInvoiceController {
     var config = new OpenXmlConfiguration() {
       IgnoreTemplateParameterMissing = true,
       FillMergedCells = true,
-      EnableWriteNullValueCell = true
+      EnableWriteNullValueCell = true,
     };
 
     var templateWatcher = System.Diagnostics.Stopwatch.StartNew();
@@ -23,7 +23,7 @@ public partial class PrintInvoiceController {
     _logger.LogInformation("Time to create excel file: {time} \n", templateWatcher.Elapsed);
 
     var logoWatcher = System.Diagnostics.Stopwatch.StartNew();
-    var logoAdded = AddLogo(outputFilePath, invoice.LogoImage ?? "logo.png");
+    var logoAdded = AddLogo(outputFilePath, invoice.LogoImage ?? "print_stamp.png");
     logoWatcher.Stop();
     if (invoice.LogoImage != null || logoAdded)
       _logger.LogInformation("Time to add logo: {time} \n", logoWatcher.Elapsed);

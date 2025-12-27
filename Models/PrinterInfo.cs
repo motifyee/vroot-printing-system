@@ -1,5 +1,3 @@
-using System.Drawing.Printing;
-
 namespace TemplatePrinting.Models;
 
 public class PrinterInfo {
