@@ -3,10 +3,9 @@ using TemplatePrinting.Models;
 using TemplatePrinting.Models.Invoice;
 
 namespace TemplatePrinting.Controllers;
-public partial class PrintInvoiceController {
-  private static Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
-    if (settings == null) return invoice;
 
+public partial class PrintInvoiceController {
+  private static Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings settings) {
     if (!(invoice.GlobalPrinter ?? false) &&
         invoice.TemplateName == "kitchen" &&
         settings.OutputClientInfoForGlobalKitchenPrinterOnly

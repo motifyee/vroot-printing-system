@@ -37,8 +37,8 @@ public partial class PrintInvoiceController(
       // TODO: clean up files after sending to printer
       // TODO: check if template && lib files exists
 
-      if (settings?.UseHtmlTemplate ?? false) await PrintInvoiceByHtml(invoice);
-      else PrintInvoiceByExcel(invoice, _util.PrintingSettings?.UseSpireExcelPrinter ?? false);
+      if (settings.UseHtmlTemplate) await PrintInvoiceByHtml(invoice);
+      else PrintInvoiceByExcel(invoice, settings.UseSpireExcelPrinter);
 
       // SaveAsJson(invoice);
 

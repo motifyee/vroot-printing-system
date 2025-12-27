@@ -4,5 +4,7 @@
 	"print_items_if_edited_for_local_kitchen_printer": false,
 	"use_html_template": false,
 	"use_spire_excel_printer": true,
-	"print_item_info_note": true
+	"print_item_info_note": true,
+	"default_print_stamp_image": "print_stamp.png",
+	"default_print_stamp_image_hash": ""
 }

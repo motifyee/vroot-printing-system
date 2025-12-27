@@ -3,7 +3,8 @@ using Newtonsoft.Json;
 
 namespace TemplatePrinting.Models;
 
-public class PrintingSettings {
+public class PrintingSettings
+{
   [JsonProperty("print_receipt_for_pending_invoice")]
   public bool PrintReceiptForPendingInvoice { get; set; } = true;
 
@@ -21,4 +22,16 @@ public class PrintingSettings {
 
   [JsonProperty("print_item_info_note")]
   public bool PrintItemInfoNote { get; set; } = true;
+
+  /// <summary>
+  /// Name of the default print stamp image
+  /// </summary>
+  [JsonProperty("default_print_stamp_image")]
+  public string? PrintStampImage { get; set; } = null;
+
+  /// <summary>
+  /// Hash code for the default print stamp image
+  /// </summary>
+  [JsonProperty("default_print_stamp_image_hash")]
+  public string? PrintStampHash { get; set; } = null;
 }

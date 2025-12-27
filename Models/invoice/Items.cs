@@ -1,6 +1,7 @@
 using TemplatePrinting.Services;
 
 namespace TemplatePrinting.Models.Invoice;
+
 public partial class Invoice {
 
   public List<Item> Items { get; set; } = new List<Item>();
@@ -15,7 +16,7 @@ public partial class Invoice {
   public List<Item> ItemsInfo {
     get {
       var util = new PrintingUtils();
-      var printNote = util.PrintingSettings?.PrintItemInfoNote ?? true;
+      var printNote = util.PrintingSettings.PrintItemInfoNote;
 
       var entries = new List<Item>();
 

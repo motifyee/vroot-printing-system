@@ -100,17 +100,28 @@ public class PrintingUtils() : IPrintingUtils, IDisposable {
       return Browser;
     }
   }
-  public PrintingSettings? PrintingSettings {
+  public PrintingSettings PrintingSettings {
     get {
       if (!File.Exists("printing-settings.json"))
-        return null;
+        return new PrintingSettings();
 
-      PrintingSettings? settings;
-      using (StreamReader r = new("printing-settings.json"))
-        settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
+      try {
+        PrintingSettings? settings;
+        using (StreamReader r = new("printing-settings.json"))
+          settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
 
-      return settings;
+        return settings ?? new PrintingSettings();
+      } catch (System.Exception) {
+        return new PrintingSettings();
+      }
     }
+  }
+
+  public string? PrintStampSecret {
+    get { return null; }
+  }
+  public string? TemplateOutputSecret {
+    get { return null; }
   }
 }
 
@@ -118,5 +129,7 @@ public interface IPrintingUtils {
   void LoadSpireLicenseKey();
   void Setup();
   IBrowser Browser { get; }
-  PrintingSettings? PrintingSettings { get; }
+  PrintingSettings PrintingSettings { get; }
+  string? PrintStampSecret { get; }
+  string? TemplateOutputSecret { get; }
 }
