@@ -1,7 +1,6 @@
 using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
 using MiniExcelLibs.Picture;
-using TemplatePrinting.Models.Invoice;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,7 +9,7 @@ namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
 
 
-  private void CreateOutputExcel(string outputFilePath, string templateFile, Invoice invoice) {
+  private void CreateOutputExcel(string outputFilePath, string templateFile, object data) {
     _logger.LogInformation("Creating file: {outputFile} \n", outputFilePath);
 
     var config = new OpenXmlConfiguration() {
@@ -19,18 +18,7 @@ public partial class PrintInvoiceController {
       EnableWriteNullValueCell = true,
     };
 
-    var templateWatcher = System.Diagnostics.Stopwatch.StartNew();
-    MiniExcel.SaveAsByTemplate(outputFilePath, templateFile, invoice, configuration: config);
-    templateWatcher.Stop();
-    _logger.LogInformation("Time to create excel file: {time} \n", templateWatcher.Elapsed);
-
-    var stampWatcher = System.Diagnostics.Stopwatch.StartNew();
-    var printStampImageName = invoice.PrintStampImageName ?? _util.PrintingSettings.PrintStampImage;
-    var printStampHash = invoice.PrintStampHash ?? _util.PrintingSettings.PrintStampHash;
-    var stampAdded = AddPrintStamp(outputFilePath, printStampImageName, printStampHash, _util.PrintStampSecret);
-    stampWatcher.Stop();
-    if (invoice.PrintStampImageName != null || stampAdded)
-      _logger.LogInformation("Time to add print stamp: {time} \n", stampWatcher.Elapsed);
+    MiniExcel.SaveAsByTemplate(outputFilePath, templateFile, data, configuration: config);
 
     _logger.LogInformation("Excel file created: {outputFile} \n", outputFilePath);
   }
