@@ -63,7 +63,7 @@ public static class ExcelUtils {
       ImageBytes = File.ReadAllBytes(imageFile),
       PictureType = "image/png",
       CellAddress = _stampRowIndex,
-      WidthPx = 320,
+      WidthPx = 300,
     });
 
     return true;
@@ -77,7 +77,7 @@ public static class ExcelUtils {
       ImageBytes = imageBytes,
       PictureType = "image/png",
       CellAddress = _stampRowIndex,
-      WidthPx = 320,
+      WidthPx = 300,
     });
 
     return true;
