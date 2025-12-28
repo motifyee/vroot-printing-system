@@ -4,10 +4,8 @@ bin/
 TemplatePrinting/printer/out/**/*.*
 
 TemplatePrinting/printer/templates/*.*
-!TemplatePrinting/printer/templates/*.xlsx
-!TemplatePrinting/printer/templates/*.html
-!TemplatePrinting/printer/templates/*.css
-!TemplatePrinting/printer/templates/*.ttf
+!TemplatePrinting/printer/templates/excel/*.xlsx
+!TemplatePrinting/printer/templates/html/**/*.*
 
 PrintingLibrary/lib/chrome-headless-shell-win64
 
