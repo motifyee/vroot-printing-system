@@ -1,15 +1,15 @@
 obj/
 bin/
 
-printer/out/**/*.*
+TemplatePrinting/out/**/*.*
 
-printer/templates/*.*
-!printer/templates/*.xlsx
-!printer/templates/*.html
-!printer/templates/*.css
-!printer/templates/*.ttf
+TemplatePrinting/templates/*.*
+!TemplatePrinting/templates/*.xlsx
+!TemplatePrinting/templates/*.html
+!TemplatePrinting/templates/*.css
+!TemplatePrinting/templates/*.ttf
 
-printer/lib/chrome-headless-shell-win64
+PrintingLibrary/lib/chrome-headless-shell-win64
 
 .sonarqube
 .vs
