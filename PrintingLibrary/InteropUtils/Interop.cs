@@ -15,7 +15,7 @@ public static class InteropUtils {
     string result = "";
     using (var process = new Process()) {
       var path = Path.GetFullPath(
-          Path.Combine(PrintingSetup.AssemblyPath, "printer", "lib", "interop", "printer.exe")
+          Path.Combine(PrintingSetup.AssemblyPath, "lib", "interop", "printer.exe")
       );
       process.StartInfo.FileName = path;
       process.StartInfo.Arguments = $"\"{filePath}\" \"{printerName}\"";

@@ -25,7 +25,6 @@ public static class PuppeteerUtils {
 
       string execFolder = Path.Combine(
           PrintingSetup.AssemblyPath,
-          "printer",
           "lib",
           "chrome-headless-shell-win64"
       );
