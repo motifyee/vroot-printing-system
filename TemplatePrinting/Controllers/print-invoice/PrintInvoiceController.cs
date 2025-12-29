@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TemplatePrinting.Models.Invoice;
 using PrintingLibrary.Setup;
+using PrintingLibrary.EmbeddedResourcesUtils;
+using TemplatePrinting.Models;
 
 namespace TemplatePrinting.Controllers;
 
@@ -10,11 +12,13 @@ namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController(
     ILogger<PrintInvoiceController> logger,
     IHostEnvironment hostEnvironment,
-    IPrintingSetup util
+    IPrintingSetup util,
+    Resources<Assets> resources
 ) : ControllerBase {
   private readonly ILogger<PrintInvoiceController> _logger = logger;
   private readonly IHostEnvironment _hostEnv = hostEnvironment;
   private readonly IPrintingSetup _util = util;
+  private readonly Resources<Assets> _resources = resources;
 
   [HttpGet("PrintingData", Name = "TestPrintingData")]
   public dynamic TestPrintingData() {

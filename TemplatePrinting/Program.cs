@@ -1,5 +1,7 @@
 using TemplatePrinting.Controllers;
 using PrintingLibrary.Setup;
+using PrintingLibrary.EmbeddedResourcesUtils;
+using TemplatePrinting.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,8 @@ builder.Services.AddCors(options => {
 builder.Services.AddSingleton<IPrintingSetup>(new PrintingSetup());
 // builder.Services.AddSingleton<IJobCountStrategy, ManagedJobCountStrategy>();
 builder.Services.AddSingleton<IJobCountStrategy, NativeJobCountStrategy>();
+
+builder.Services.AddSingleton(new Resources<Assets>());
 
 if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) {
   builder.Services.AddSingleton<PrinterBackgroundService>();

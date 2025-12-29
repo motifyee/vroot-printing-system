@@ -39,6 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\print_stamp.png" />
+    <!-- <EmbeddedResource Include="Assets\**\*.*" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.11" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.10" />

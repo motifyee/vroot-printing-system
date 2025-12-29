@@ -4,7 +4,7 @@ using PrintingLibrary.InteropUtils;
 using PrintingLibrary.SpireUtils;
 using PrintingLibrary.Setup;
 using TemplatePrinting.Models.Invoice;
-using PrintingLibrary.EmbeddedResourceUtils;
+using TemplatePrinting.Models;
 
 namespace TemplatePrinting.Controllers;
 
@@ -24,7 +24,7 @@ public partial class PrintInvoiceController {
 
     ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice);
 
-    ExcelUtils.AddPrintStamp(outputFile, Resources.PrintStamp);
+    ExcelUtils.AddPrintStamp(outputFile, _resources.GetBytes(Assets.PrintStamp));
 
     if (!_hostEnv.IsProduction()) return;
 
