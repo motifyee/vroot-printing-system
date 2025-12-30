@@ -12,14 +12,15 @@
   <ItemGroup>
     <ProjectReference Include="..\PrintingLibrary\PrintingLibrary.csproj" />
 
-    <None Include="..\PrintingLibrary\lib\**\*.*">
+    <!-- <None Include="..\PrintingLibrary\lib\**\*.*">
       <Link>lib\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </None> -->
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\print_stamp.png" />
+    <EmbeddedResource Include="Assets\print_stamp_72.png" />
     <!-- <EmbeddedResource Include="Assets\**\*.*" /> -->
 
     <None Include="printer\images\**\*.*">

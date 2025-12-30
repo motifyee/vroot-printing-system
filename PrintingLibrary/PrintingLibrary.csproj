@@ -57,7 +57,10 @@
       <Private>True</Private>
     </Reference> -->
 
-    <None Include="lib/**/*.*">
+    <!-- <None Include="lib/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None> -->
+    <None Include="lib/printing-settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
