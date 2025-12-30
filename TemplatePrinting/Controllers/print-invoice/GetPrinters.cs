@@ -87,8 +87,12 @@ public partial class PrintInvoiceController {
             SupportsColor = false,
             MaxCopies = 99,
             Duplex = "Simplex",
-            IsPlotter = false,
-            PaperSizes = ["A4", "Letter", "Legal", "Executive", "A5", "A6"],
+            PaperSizes = [
+                new PaperSizeInfo { Name = "A4", Width = 827, Height = 1169, Kind = "A4", RawKind = 9 },
+                new PaperSizeInfo { Name = "Letter", Width = 850, Height = 1100, Kind = "Letter", RawKind = 1 },
+                new PaperSizeInfo { Name = "Legal", Width = 850, Height = 1400, Kind = "Legal", RawKind = 5 }
+            ],
+            DefaultPaperSize = new PaperSizeInfo { Name = "A4", Width = 827, Height = 1169, Kind = "A4", RawKind = 9 },
             Resolutions = ["600x600dpi", "1200x1200dpi"]
         },
         new PrinterInfo {
@@ -107,8 +111,11 @@ public partial class PrintInvoiceController {
             SupportsColor = true,
             MaxCopies = 99,
             Duplex = "Vertical",
-            IsPlotter = false,
-            PaperSizes = ["A4", "B5", "A6", "4x6in", "5x7in", "Envelope"],
+            PaperSizes = [
+                new PaperSizeInfo { Name = "A4", Width = 827, Height = 1169, Kind = "A4", RawKind = 9 },
+                new PaperSizeInfo { Name = "4x6in", Width = 400, Height = 600, Kind = "Custom", RawKind = 256 }
+            ],
+            DefaultPaperSize = new PaperSizeInfo { Name = "A4", Width = 827, Height = 1169, Kind = "A4", RawKind = 9 },
             Resolutions = ["300x300dpi", "600x600dpi", "1200x2400dpi"]
         },
         new PrinterInfo {
@@ -128,8 +135,11 @@ public partial class PrintInvoiceController {
             SupportsColor = true,
             MaxCopies = 1,
             Duplex = "None",
-            IsPlotter = true,
-            PaperSizes = ["A0", "A1", "A2", "A3", "B0", "B1", "B2"],
+            PaperSizes = [
+                new PaperSizeInfo { Name = "A0", Width = 3311, Height = 4681, Kind = "Custom", RawKind = 256 },
+                new PaperSizeInfo { Name = "A1", Width = 2339, Height = 3311, Kind = "Custom", RawKind = 256 }
+            ],
+            DefaultPaperSize = new PaperSizeInfo { Name = "A0", Width = 3311, Height = 4681, Kind = "Custom", RawKind = 256 },
             Resolutions = ["1200dpi", "2400dpi"]
         }
     ];
