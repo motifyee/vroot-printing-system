@@ -121,6 +121,28 @@ public static class EncryptUtil {
     }
   }
 
+  /// <summary>
+  /// Decrypts a file in place (replaces the encrypted file with decrypted version).
+  /// Creates a temporary file during decryption to avoid data loss on failure.
+  /// </summary>
+  public static void DecryptFileInPlace(string filePath, string password) {
+    if (!File.Exists(filePath))
+      throw new FileNotFoundException("File not found", filePath);
+
+    string tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+    try {
+      DecryptFile(filePath, tempFile, password);
+      File.Delete(filePath);
+      File.Move(tempFile, filePath);
+    } catch {
+      // Clean up temp file if it exists
+      if (File.Exists(tempFile))
+        File.Delete(tempFile);
+      throw;
+    }
+  }
+
   public static string GenerateMetaHash(string filePath) {
     byte[] fileBytes = File.ReadAllBytes(filePath);
     var md5Hash = MD5.HashData(fileBytes);

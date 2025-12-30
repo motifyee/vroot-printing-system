@@ -71,8 +71,8 @@ public partial class PrintInvoiceController {
   public ActionResult GetDummyPrintersData() {
     List<PrinterInfo> printers = [
         new PrinterInfo {
-            Name = "HP LaserJet Pro M404n (Office)",
-            FullName = "HP LaserJet Pro M404n [Office_Floor_1]",
+            Name = "receipt",
+            FullName = "receipt",
             IsDefault = true,
             IsValid = true,
             IsOffline = false,

@@ -48,7 +48,7 @@ public static class ExcelUtils {
   }
 
 
-  public static bool AddPrintStamp(string filePath, string? printStampImageName, string? printStampHash, string? hashSecret, string? stampRowIndex = null) {
+  public static bool AddPrintStamp(string filePath, string? printStampImageName, string? printStampHash, string? hashSecret, string? encryptionPassword = null, string? stampRowIndex = null) {
     if (string.IsNullOrEmpty(printStampImageName)) return false;
     if (string.IsNullOrEmpty(printStampHash)) return false;
     if (string.IsNullOrEmpty(hashSecret)) return false;
@@ -71,27 +71,51 @@ public static class ExcelUtils {
       return false;
     }
 
-    var _stampRowIndex = stampRowIndex ?? $"A{GetLastDataRowIndex(filePath) + 2}";
-    MiniExcel.AddPicture(filePath, new MiniExcelPicture {
-      ImageBytes = File.ReadAllBytes(imageFile),
-      PictureType = "image/png",
-      CellAddress = _stampRowIndex,
-      WidthPx = 300,
-    });
+    // Decrypt if password is provided
+    if (!string.IsNullOrEmpty(encryptionPassword)) {
+      EncryptUtil.DecryptFileInPlace(filePath, encryptionPassword);
+    }
+
+    try {
+      var _stampRowIndex = stampRowIndex ?? $"A{GetLastDataRowIndex(filePath) + 2}";
+      MiniExcel.AddPicture(filePath, new MiniExcelPicture {
+        ImageBytes = File.ReadAllBytes(imageFile),
+        PictureType = "image/png",
+        CellAddress = _stampRowIndex,
+        WidthPx = 300,
+      });
+    } finally {
+      // Re-encrypt if password was provided
+      if (!string.IsNullOrEmpty(encryptionPassword)) {
+        EncryptUtil.EncryptFileInPlace(filePath, encryptionPassword);
+      }
+    }
 
     return true;
   }
 
-  public static bool AddPrintStamp(string filePath, byte[]? imageBytes, string? stampRowIndex = null) {
+  public static bool AddPrintStamp(string filePath, byte[]? imageBytes, string? encryptionPassword = null, string? stampRowIndex = null) {
     if (imageBytes == null) return false;
 
-    var _stampRowIndex = stampRowIndex ?? $"A{GetLastDataRowIndex(filePath) + 2}";
-    MiniExcel.AddPicture(filePath, new MiniExcelPicture {
-      ImageBytes = imageBytes,
-      PictureType = "image/png",
-      CellAddress = _stampRowIndex,
-      WidthPx = 300,
-    });
+    // Decrypt if password is provided
+    if (!string.IsNullOrEmpty(encryptionPassword)) {
+      EncryptUtil.DecryptFileInPlace(filePath, encryptionPassword);
+    }
+
+    try {
+      var _stampRowIndex = stampRowIndex ?? $"A{GetLastDataRowIndex(filePath) + 2}";
+      MiniExcel.AddPicture(filePath, new MiniExcelPicture {
+        ImageBytes = imageBytes,
+        PictureType = "image/png",
+        CellAddress = _stampRowIndex,
+        WidthPx = 300,
+      });
+    } finally {
+      // Re-encrypt if password was provided
+      if (!string.IsNullOrEmpty(encryptionPassword)) {
+        EncryptUtil.EncryptFileInPlace(filePath, encryptionPassword);
+      }
+    }
 
     return true;
   }

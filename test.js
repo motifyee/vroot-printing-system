@@ -1,4 +1,5 @@
 // Example JavaScript code to send a POST request to the PrintInvoice endpoint with dummy invoice data
+// NODE_TLS_REJECT_UNAUTHORIZED=0 node test.js
 
 const https = require('https'); // Add this for SSL bypass
 

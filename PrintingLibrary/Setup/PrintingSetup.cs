@@ -66,7 +66,7 @@ public partial class PrintingSetup() : IPrintingSetup, IDisposable {
   /// Change this value before building for production.
   /// </summary>
   public string? EncryptionPassword {
-    get { return "CHANGE_THIS_SECURE_PASSWORD_BEFORE_PRODUCTION"; }
+    get { return Settings.EncryptGeneratedFiles ? "5PfY^484J@p9P&Ys%&Ya" : null; }
   }
 
 
