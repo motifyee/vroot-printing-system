@@ -12,28 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\PrintingLibrary\PrintingLibrary.csproj" />
 
-    <Reference Include="Spire.Pdf">
-      <HintPath>..\PrintingLibrary\lib\Spire\Spire.Pdf.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.XLS">
-      <HintPath>..\PrintingLibrary\lib\Spire\Spire.XLS.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel">
-      <HintPath>..\PrintingLibrary\lib\interop\Microsoft.Office.Interop.Excel.dll</HintPath>
-    </Reference>
-    <Reference Include="OFFICE">
-      <HintPath>..\PrintingLibrary\lib\interop\OFFICE.DLL</HintPath>
-    </Reference>
-
     <None Include="..\PrintingLibrary\lib\**\*.*">
       <Link>lib\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-
-    <None Include="printer\images\**\*.*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="printer\templates\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -41,6 +21,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets\print_stamp.png" />
     <!-- <EmbeddedResource Include="Assets\**\*.*" /> -->
+
+    <None Include="printer\images\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="printer\templates\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
