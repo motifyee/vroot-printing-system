@@ -55,12 +55,12 @@ function createPrinterCardContent(p) {
 			</div>
 		</div>
 
-		<div class="spec-grid">
+		<div class="spec-grid jobs-container">
 			<div class="spec-item">
 				<span class="spec-label">Driver</span>
 				<span class="spec-value">${p.driverName || 'Generic'}</span>
 			</div>
-			<div class="spec-item">
+			<div class="spec-item printable-jobs">
 				<span class="spec-label">Jobs</span>
 				<span class="spec-value" style="${
 					p.jobCount > 0 ? 'color: var(--accent); font-weight: 700;' : ''
@@ -305,5 +305,39 @@ async function loadDummyData() {
 	}
 }
 
+function initViewToggle() {
+	const container = document.getElementById('printerContainer');
+	const toggle = document.getElementById('viewToggle');
+	if (!toggle || !container) return;
+
+	const buttons = toggle.querySelectorAll('.toggle-btn');
+
+	// Load saved preference
+	const savedView = localStorage.getItem('vroot-printer-view') || 'expanded';
+	setView(savedView);
+
+	buttons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			const view = btn.dataset.view;
+			setView(view);
+		});
+	});
+
+	function setView(view) {
+		if (view === 'compact') {
+			container.classList.add('compact-mode');
+		} else {
+			container.classList.remove('compact-mode');
+		}
+
+		buttons.forEach(b => {
+			b.classList.toggle('active', b.dataset.view === view);
+		});
+
+		localStorage.setItem('vroot-printer-view', view);
+	}
+}
+
 // Initial start
+initViewToggle();
 startMonitoring();

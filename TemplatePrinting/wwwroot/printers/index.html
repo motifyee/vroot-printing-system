@@ -14,10 +14,38 @@
 	</head>
 	<body>
 		<div class="header">
-			<h1>vROOT Printer System</h1>
-			<p style="color: var(--text-dim)">
-				Detailed diagnostics for all connected output devices
-			</p>
+			<div
+				style="
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					flex-wrap: wrap;
+					gap: 1rem;
+				"
+			>
+				<div>
+					<h1>vROOT Printer System</h1>
+					<p style="color: var(--text-dim)">
+						Detailed diagnostics for all connected output devices
+					</p>
+				</div>
+				<div class="view-toggle" id="viewToggle">
+					<button
+						class="toggle-btn active"
+						data-view="expanded"
+						title="Full detailed view"
+					>
+						<span>📄</span> Detailed
+					</button>
+					<button
+						class="toggle-btn"
+						data-view="compact"
+						title="Streamlined compact view"
+					>
+						<span>📑</span> Compact
+					</button>
+				</div>
+			</div>
 		</div>
 		<div class="container" id="printerContainer">
 			<!-- Skeleton Loaders -->

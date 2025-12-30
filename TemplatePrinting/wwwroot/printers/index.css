@@ -254,6 +254,100 @@ h1 {
 	}
 }
 
+/* View Toggle Styles */
+.view-toggle {
+	display: flex;
+	background: #161b22;
+	border: 1px solid var(--border);
+	padding: 0.25rem;
+	border-radius: 8px;
+	gap: 0.25rem;
+}
+
+.toggle-btn {
+	background: transparent;
+	border: none;
+	color: var(--text-dim);
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+	color: var(--text-main);
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.toggle-btn.active {
+	background: var(--accent);
+	color: white;
+}
+
+/* Compact Mode Adaptations */
+.container.compact-mode {
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 1rem;
+}
+
+.compact-mode .card {
+	padding: 1rem;
+}
+
+.compact-mode .card-title {
+	margin-bottom: 0.75rem;
+	font-size: 1rem;
+}
+
+/* Hide most specs but keep jobs */
+.compact-mode .spec-grid:not(.jobs-container) {
+	display: none;
+}
+
+.compact-mode .spec-item:not(.printable-jobs) {
+	display: none;
+}
+
+.compact-mode .printable-jobs {
+	grid-column: 1 / -1;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	background: rgba(255, 255, 255, 0.03);
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+}
+
+.compact-mode .printable-jobs .spec-label {
+	margin-bottom: 0;
+	font-size: 0.7rem;
+}
+
+/* Streamline capabilities */
+.compact-mode .tag-container {
+	margin-top: 0;
+	padding-top: 0.75rem;
+	border-top: 1px solid rgba(48, 54, 61, 0.5);
+	margin-bottom: 1rem !important;
+}
+
+.compact-mode .tag-container .spec-label {
+	display: none;
+}
+
+.compact-mode .tags {
+	margin-top: 0;
+}
+
+.compact-mode .tags .tag:not(.tag-default) {
+	display: none;
+}
+
 /* Updated Highlight & Toaster Styles */
 .card.updated-highlight {
 	position: relative;
