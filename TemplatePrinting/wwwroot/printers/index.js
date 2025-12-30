@@ -127,7 +127,7 @@ function createPrinterCardContent(p) {
 			"\\'"
 		)}', this)">
 			<div class="spinner"></div>
-			<span class="btn-text">Test Paper</span>
+			<span class="btn-text">Test</span>
 		</button>
 	`;
 }
@@ -313,7 +313,7 @@ function initViewToggle() {
 	const buttons = toggle.querySelectorAll('.toggle-btn');
 
 	// Load saved preference
-	const savedView = localStorage.getItem('vroot-printer-view') || 'expanded';
+	const savedView = localStorage.getItem('vroot-printer-view') || 'compact';
 	setView(savedView);
 
 	buttons.forEach(btn => {
@@ -338,6 +338,39 @@ function initViewToggle() {
 	}
 }
 
+function initThemeToggle() {
+	const toggle = document.getElementById('themeToggle');
+	if (!toggle) return;
+
+	const buttons = toggle.querySelectorAll('.toggle-btn');
+
+	// Load saved preference
+	const savedTheme = localStorage.getItem('vroot-printer-theme') || 'light';
+	setTheme(savedTheme);
+
+	buttons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			const theme = btn.dataset.theme;
+			setTheme(theme);
+		});
+	});
+
+	function setTheme(theme) {
+		if (theme === 'light') {
+			document.body.classList.add('light-theme');
+		} else {
+			document.body.classList.remove('light-theme');
+		}
+
+		buttons.forEach(b => {
+			b.classList.toggle('active', b.dataset.theme === theme);
+		});
+
+		localStorage.setItem('vroot-printer-theme', theme);
+	}
+}
+
 // Initial start
+initThemeToggle();
 initViewToggle();
 startMonitoring();

@@ -8,6 +8,26 @@
 	--success: #3fb950;
 	--error: #f85149;
 	--shimmer: linear-gradient(90deg, #161b22 25%, #21262d 50%, #161b22 75%);
+	--card-title-color: #fff;
+	--header-gradient: linear-gradient(90deg, #fff, var(--text-dim));
+	--indicator-bg: rgba(63, 185, 80, 0.1);
+	--indicator-border: rgba(63, 185, 80, 0.2);
+}
+
+.light-theme {
+	--bg: #f6f8fa;
+	--card-bg: #ffffff;
+	--accent: #0969da;
+	--text-main: #1f2328;
+	--text-dim: #656d76;
+	--border: #d0d7de;
+	--success: #1a7f37;
+	--error: #cf222e;
+	--shimmer: linear-gradient(90deg, #f6f8fa 25%, #eaeef2 50%, #f6f8fa 75%);
+	--card-title-color: #1f2328;
+	--header-gradient: linear-gradient(90deg, #1f2328, var(--text-dim));
+	--indicator-bg: rgba(26, 127, 55, 0.1);
+	--indicator-border: rgba(26, 127, 55, 0.2);
 }
 body {
 	font-family: 'Inter', sans-serif;
@@ -26,7 +46,7 @@ h1 {
 	font-size: 2.25rem;
 	font-weight: 700;
 	margin: 0;
-	background: linear-gradient(90deg, #fff, var(--text-dim));
+	background: var(--header-gradient);
 	-webkit-background-clip: text;
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -69,7 +89,7 @@ h1 {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	color: #fff;
+	color: var(--card-title-color);
 }
 .status-pill {
 	font-size: 0.75rem;
@@ -123,7 +143,7 @@ h1 {
 	margin-top: 0.5rem;
 }
 .tag {
-	background: #161b22;
+	background: rgba(139, 148, 158, 0.05);
 	border: 1px solid var(--border);
 	padding: 0.125rem 0.5rem;
 	border-radius: 4px;
@@ -255,9 +275,10 @@ h1 {
 }
 
 /* View Toggle Styles */
-.view-toggle {
+.view-toggle,
+.theme-toggle {
 	display: flex;
-	background: #161b22;
+	background: rgba(139, 148, 158, 0.1);
 	border: 1px solid var(--border);
 	padding: 0.25rem;
 	border-radius: 8px;
