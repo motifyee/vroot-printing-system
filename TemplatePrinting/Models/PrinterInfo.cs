@@ -17,7 +17,15 @@ public class PrinterInfo {
   public bool SupportsColor { get; set; }
   public int MaxCopies { get; set; }
   public string Duplex { get; set; } = string.Empty;
-  public bool IsPlotter { get; set; }
-  public List<string> PaperSizes { get; set; } = [];
+  public List<PaperSizeInfo> PaperSizes { get; set; } = [];
+  public PaperSizeInfo? DefaultPaperSize { get; set; }
   public List<string> Resolutions { get; set; } = [];
+}
+
+public class PaperSizeInfo {
+  public string Name { get; set; } = string.Empty;
+  public int Width { get; set; }
+  public int Height { get; set; }
+  public string Kind { get; set; } = string.Empty;
+  public int RawKind { get; set; }
 }

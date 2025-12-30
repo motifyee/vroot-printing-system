@@ -85,17 +85,36 @@ function createPrinterCardContent(p) {
 		<div class="tag-container" style="margin-bottom: 1.25rem;">
 			<span class="spec-label">Capabilities</span>
 			<div class="tags">
-				${p.paperSizes
-					.slice(0, 5)
-					.map(size => `<span class="tag">${size}</span>`)
-					.join('')}
-				${
-					p.paperSizes.length > 5
-						? `<span class="tag" title="${p.paperSizes
-								.slice(5)
-								.join(', ')}">+ ${p.paperSizes.length - 5} more</span>`
-						: ''
-				}
+				${(() => {
+					const defaultSize = p.defaultPaperSize;
+					const otherSizes = p.paperSizes.filter(
+						s => s.name !== defaultSize?.name
+					);
+					const sortedSizes = defaultSize
+						? [
+								{ ...defaultSize, isDefault: true },
+								...otherSizes.map(s => ({ ...s, isDefault: false })),
+						  ]
+						: otherSizes.map(s => ({ ...s, isDefault: false }));
+
+					return (
+						sortedSizes
+							.slice(0, 5)
+							.map(size => {
+								const dims = `<span style="font-size: 0.65rem; opacity: 0.7; margin-left: 4px;">(${size.width}x${size.height})</span>`;
+								return size.isDefault
+									? `<span class="tag tag-default"><span class="tag-default-label">DEF</span> ${size.name}${dims}</span>`
+									: `<span class="tag">${size.name}${dims}</span>`;
+							})
+							.join('') +
+						(sortedSizes.length > 5
+							? `<span class="tag" title="${sortedSizes
+									.slice(5)
+									.map(s => `${s.name} (${s.width}x${s.height})`)
+									.join(', ')}">+ ${sortedSizes.length - 5} more</span>`
+							: '')
+					);
+				})()}
 			</div>
 		</div>
 

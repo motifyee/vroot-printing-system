@@ -130,6 +130,23 @@ h1 {
 	font-size: 0.75rem;
 	color: var(--text-dim);
 }
+.tag-default {
+	background: rgba(47, 129, 247, 0.1);
+	border: 1px solid var(--accent);
+	color: var(--text-main);
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+.tag-default-label {
+	font-size: 0.6rem;
+	background: var(--accent);
+	color: #fff;
+	padding: 0 4px;
+	border-radius: 2px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
 
 /* Skeleton States */
 .skeleton {

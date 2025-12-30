@@ -4,6 +4,7 @@ using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
 using MiniExcelLibs.Picture;
 using PrintingLibrary.EncryptUtils;
+using Spire.Xls;
 
 namespace PrintingLibrary.ExcelUtils;
 

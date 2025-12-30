@@ -111,8 +111,20 @@ public class PrinterBackgroundService : IDisposable {
           SupportsColor = settings.SupportsColor,
           MaxCopies = settings.MaximumCopies,
           Duplex = settings.Duplex.ToString(),
-          IsPlotter = settings.IsPlotter,
-          PaperSizes = settings.PaperSizes.Cast<PaperSize>().Select(x => x.PaperName).ToList(),
+          PaperSizes = [.. settings.PaperSizes.Cast<PaperSize>().Select(x => new PaperSizeInfo {
+            Name = x.PaperName,
+            Width = x.Width,
+            Height = x.Height,
+            Kind = x.Kind.ToString(),
+            RawKind = x.RawKind
+          })],
+          DefaultPaperSize = new PaperSizeInfo {
+            Name = settings.DefaultPageSettings.PaperSize.PaperName,
+            Width = settings.DefaultPageSettings.PaperSize.Width,
+            Height = settings.DefaultPageSettings.PaperSize.Height,
+            Kind = settings.DefaultPageSettings.PaperSize.Kind.ToString(),
+            RawKind = settings.DefaultPageSettings.PaperSize.RawKind
+          },
           Resolutions = settings.PrinterResolutions.Cast<PrinterResolution>().Select(x => x.ToString()).ToList(),
           JobCount = _strategy.GetJobCount(printerName)
         };
