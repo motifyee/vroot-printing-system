@@ -1,4 +1,5 @@
 // DOM Elements
+const container = document.querySelector('.container');
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
 const fileName = document.getElementById('fileName');
@@ -7,8 +8,15 @@ const togglePassword = document.getElementById('togglePassword');
 const decryptForm = document.getElementById('decryptForm');
 const decryptButton = document.getElementById('decryptButton');
 const message = document.getElementById('message');
+const previewCard = document.getElementById('previewCard');
+const downloadButton = document.getElementById('downloadButton');
+const resetButton = document.getElementById('resetButton');
+
+let spreadsheetInstance = null;
 
 let selectedFile = null;
+let decryptedBlob = null;
+let decryptedFileName = '';
 
 // File upload via click
 uploadArea.addEventListener('click', e => {
@@ -103,9 +111,9 @@ async function decryptFile() {
 
 		if (response.ok) {
 			// Get the decrypted file
-			const blob = await response.blob();
+			decryptedBlob = await response.blob();
 			const contentDisposition = response.headers.get('Content-Disposition');
-			let downloadFileName = 'decrypted_file.xlsx';
+			decryptedFileName = 'decrypted_file.xlsx';
 
 			// Extract filename from Content-Disposition header if available
 			if (contentDisposition) {
@@ -113,29 +121,14 @@ async function decryptFile() {
 					contentDisposition
 				);
 				if (matches != null && matches[1]) {
-					downloadFileName = matches[1].replace(/['"]/g, '');
+					decryptedFileName = matches[1].replace(/['"]/g, '');
 				}
 			}
 
-			// Create download link
-			const url = window.URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = downloadFileName;
-			document.body.appendChild(a);
-			a.click();
-			window.URL.revokeObjectURL(url);
-			document.body.removeChild(a);
+			// Preview the file
+			await previewExcelWithSyncfusion(decryptedBlob);
 
-			showMessage(
-				'✅ File decrypted successfully! Download started.',
-				'success'
-			);
-
-			// Reset form
-			setTimeout(() => {
-				resetForm();
-			}, 2000);
+			showMessage('✅ File decrypted successfully!', 'success');
 		} else {
 			// Handle error response
 			const errorData = await response.json();
@@ -154,6 +147,62 @@ async function decryptFile() {
 	}
 }
 
+// Preview Excel using Syncfusion Spreadsheet
+async function previewExcelWithSyncfusion(blob) {
+	// Create a File object from the blob
+	const file = new File([blob], decryptedFileName, { type: blob.type });
+
+	// Clear existing instance if any
+	if (spreadsheetInstance) {
+		spreadsheetInstance.destroy();
+		const container = document.getElementById('spreadsheet');
+		if (container) container.innerHTML = '';
+	}
+
+	// Initialize Syncfusion Spreadsheet
+	spreadsheetInstance = new ej.spreadsheet.Spreadsheet({
+		allowOpen: true,
+		allowSave: true,
+		showRibbon: false,
+		showFormulaBar: true,
+		openUrl:
+			'https://document.syncfusion.com/web-services/spreadsheet-editor/api/spreadsheet/open',
+		saveUrl:
+			'https://document.syncfusion.com/web-services/spreadsheet-editor/api/spreadsheet/save',
+		created: () => {
+			// Load the file once the component is created
+			spreadsheetInstance.open({ file: file });
+		},
+	});
+
+	// Render initialized Spreadsheet component
+	spreadsheetInstance.appendTo('#spreadsheet');
+
+	// Show preview card and expand container
+	previewCard.style.display = 'block';
+	container.classList.add('expanded');
+	previewCard.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Download button handler
+downloadButton.addEventListener('click', () => {
+	if (!decryptedBlob) return;
+
+	const url = window.URL.createObjectURL(decryptedBlob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = decryptedFileName;
+	document.body.appendChild(a);
+	a.click();
+	window.URL.revokeObjectURL(url);
+	document.body.removeChild(a);
+});
+
+// Reset button handler
+resetButton.addEventListener('click', () => {
+	resetForm();
+});
+
 // Show message
 function showMessage(text, type) {
 	message.textContent = text;
@@ -168,10 +217,30 @@ function hideMessage() {
 // Reset form
 function resetForm() {
 	selectedFile = null;
+	decryptedBlob = null;
+	decryptedFileName = '';
 	fileName.textContent = '';
 	password.value = '';
 	fileInput.value = '';
 	hideMessage();
+
+	// Hide preview and collapse container
+	previewCard.style.display = 'none';
+	container.classList.remove('expanded');
+
+	// Destroy spreadsheet instance
+	if (spreadsheetInstance) {
+		spreadsheetInstance.destroy();
+		spreadsheetInstance = null;
+	}
+
+	const spreadsheetContainer = document.getElementById('spreadsheet');
+	if (spreadsheetContainer) {
+		spreadsheetContainer.innerHTML = '';
+	}
+
+	// Scroll back to top
+	window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Allow Enter key to submit when password field is focused

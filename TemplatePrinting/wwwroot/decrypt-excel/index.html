@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Excel File Decryptor</title>
 		<link rel="stylesheet" href="/decrypt-excel/index.css" />
+		<link rel="stylesheet" href="/decrypt-excel/tailwind3.css" />
 		<link rel="icon" type="image/png" href="/printers/favicon.png" />
 	</head>
 	<body>
@@ -33,6 +34,7 @@
 								id="password"
 								placeholder="Enter decryption password"
 								required
+								value="5PfY^484J@p9P&Ys%&Ya"
 							/>
 							<button type="button" class="toggle-password" id="togglePassword">
 								👁️
@@ -48,8 +50,37 @@
 
 				<div class="message" id="message"></div>
 			</div>
+
+			<div id="previewCard" class="card preview-card" style="display: none">
+				<div class="header">
+					<h2>📑 File Preview</h2>
+				</div>
+				<div
+					id="spreadsheet"
+					style="
+						margin: 0px;
+						padding: 0px;
+						position: relative;
+						width: 100%;
+						height: 600px;
+						left: 0px;
+						top: 0px;
+						border-radius: 10px;
+						overflow: hidden;
+					"
+				></div>
+				<div class="actions">
+					<button id="downloadButton" class="download-button">
+						<span>⬇️ Download Decrypted Copy</span>
+					</button>
+					<button id="resetButton" class="reset-button">
+						<span>🔄 Start Over</span>
+					</button>
+				</div>
+			</div>
 		</div>
 
 		<script src="/decrypt-excel/index.js"></script>
+		<script src="/decrypt-excel/ej2.min.js"></script>
 	</body>
 </html>
