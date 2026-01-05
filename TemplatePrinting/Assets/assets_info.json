@@ -1,0 +1,29 @@
+{
+	"assets": {
+		"print_stamp": {
+			"path": "Assets/print_stamp(300x13).png",
+			"width": 300,
+			"height": 13
+		},
+		"print_stamp_72": {
+			"path": "Assets/print_stamp(270x13).png",
+			"width": 270,
+			"height": 13
+		},
+		"print_stamp_144": {
+			"path": "Assets/print_stamp(270x15).png",
+			"width": 270,
+			"height": 15
+		},
+		"print_stamp_288": {
+			"path": "Assets/print_stamp(270x20).png",
+			"width": 270,
+			"height": 20
+		},
+		"print_stamp_512": {
+			"path": "Assets/print_stamp(300x20).png",
+			"width": 300,
+			"height": 20
+		}
+	}
+}

@@ -1,6 +1,7 @@
 // Example JavaScript code to send a POST request to the PrintInvoice endpoint with dummy invoice data
 // NODE_TLS_REJECT_UNAUTHORIZED=0 node test.js
 
+const { readFileSync } = require('fs');
 const https = require('https'); // Add this for SSL bypass
 
 const dummyInvoice = {
@@ -52,6 +53,10 @@ fetch('https://localhost:7229/PrintingData', {
 	},
 	body: JSON.stringify(dummyInvoice),
 	agent: new https.Agent({ rejectUnauthorized: false }), // Bypass SSL verification for self-signed cert
+	tls: {
+		// ca: readFileSync('./cert.pem'),
+		rejectUnauthorized: false,
+	},
 })
 	.then(() => console.log('Success posting to PrintInvoice endpoint ✅'))
 	.catch(error => console.error('❌ Error:', error));

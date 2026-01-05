@@ -4,7 +4,7 @@ using MiniExcelLibs;
 using MiniExcelLibs.OpenXml;
 using MiniExcelLibs.Picture;
 using PrintingLibrary.EncryptUtils;
-using Spire.Xls;
+using System.Runtime.InteropServices;
 
 namespace PrintingLibrary.ExcelUtils;
 
@@ -94,7 +94,14 @@ public static class ExcelUtils {
     return true;
   }
 
-  public static bool AddPrintStamp(string filePath, byte[]? imageBytes, string? encryptionPassword = null, string? stampRowIndex = null) {
+  public static bool AddPrintStamp(
+    string filePath,
+    byte[]? imageBytes,
+    int? width = null,
+    int? height = null,
+    string? encryptionPassword = null,
+    string? stampRowIndex = null
+  ) {
     if (imageBytes == null) return false;
 
     // Decrypt if password is provided
@@ -104,12 +111,18 @@ public static class ExcelUtils {
 
     try {
       var _stampRowIndex = stampRowIndex ?? $"A{GetLastDataRowIndex(filePath) + 2}";
-      MiniExcel.AddPicture(filePath, new MiniExcelPicture {
+      var picture = new MiniExcelPicture {
         ImageBytes = imageBytes,
         PictureType = "image/png",
         CellAddress = _stampRowIndex,
-        WidthPx = 300,
-      });
+        // SheetName = "Sheet1",
+      };
+      if (width.HasValue) picture.WidthPx = width.Value;
+      if (height.HasValue) picture.HeightPx = height.Value;
+
+      MiniExcel.AddPicture(filePath, picture);
+    } catch (Exception ex) {
+      _logger.LogError(ex, "Failed to add print stamp to file: {filePath}", filePath);
     } finally {
       // Re-encrypt if password was provided
       if (!string.IsNullOrEmpty(encryptionPassword)) {

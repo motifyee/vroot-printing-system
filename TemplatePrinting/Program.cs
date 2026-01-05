@@ -3,6 +3,7 @@ using PrintingLibrary.Setup;
 using PrintingLibrary.EmbeddedResourcesUtils;
 using TemplatePrinting.Models;
 using System.Reflection;
+using TemplatePrinting.services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +14,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddCors(options =>
-{
+builder.Services.AddCors(options => {
   options.AddPolicy(name: Origins,
-                    policy =>
-                    {
+                    policy => {
                       policy
                                         .AllowAnyOrigin()
                                         .AllowAnyHeader()
@@ -29,10 +28,10 @@ builder.Services.AddSingleton<IPrintingSetup>(new PrintingSetup());
 // builder.Services.AddSingleton<IJobCountStrategy, ManagedJobCountStrategy>();
 builder.Services.AddSingleton<IJobCountStrategy, NativeJobCountStrategy>();
 
-builder.Services.AddSingleton(new Resources<Assets>());
+builder.Services.AddSingleton<DataService>();
+builder.Services.AddSingleton(sp => new Resources<Asset>(sp.GetRequiredService<DataService>().GetAssets()));
 
-if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-{
+if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) {
   builder.Services.AddSingleton<PrinterBackgroundService>();
 }
 
@@ -42,8 +41,7 @@ var utils = app.Services.GetRequiredService<IPrintingSetup>();
 utils.Setup();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
   app.UseSwagger();
   app.UseSwaggerUI();
 }
@@ -53,41 +51,33 @@ if (app.Environment.IsDevelopment())
 app.UseCors(Origins);
 
 // Middleware to handle case-insensitive static file requests on Linux
-app.Use(async (context, next) =>
-{
+app.Use(async (context, next) => {
   var path = context.Request.Path.Value;
-  if (!string.IsNullOrEmpty(path) && path != "/")
-  {
+  if (!string.IsNullOrEmpty(path) && path != "/") {
     var webRoot = app.Environment.WebRootPath;
     var relativePath = path.TrimStart('/');
     var fullPath = Path.Combine(webRoot, relativePath);
 
     // If file/directory doesn't exist with exact casing, try case-insensitive match
-    if (!File.Exists(fullPath) && !Directory.Exists(fullPath))
-    {
+    if (!File.Exists(fullPath) && !Directory.Exists(fullPath)) {
       var parts = relativePath.Split('/');
       var currentPath = webRoot;
       var foundMatch = true;
 
-      foreach (var part in parts)
-      {
+      foreach (var part in parts) {
         if (string.IsNullOrEmpty(part)) continue;
         var match = Directory.GetFileSystemEntries(currentPath)
             .FirstOrDefault(e => string.Equals(Path.GetFileName(e), part, StringComparison.OrdinalIgnoreCase));
 
-        if (match != null)
-        {
+        if (match != null) {
           currentPath = match;
-        }
-        else
-        {
+        } else {
           foundMatch = false;
           break;
         }
       }
 
-      if (foundMatch)
-      {
+      if (foundMatch) {
         var newPath = "/" + Path.GetRelativePath(webRoot, currentPath).Replace("\\", "/");
         context.Request.Path = newPath;
       }
@@ -103,20 +93,15 @@ app.UseAuthorization();
 
 
 
-try
-{
+try {
   app.MapControllers();
   app.Run();
-}
-catch (ReflectionTypeLoadException ex)
-{
+} catch (ReflectionTypeLoadException ex) {
   // detect missing assemblies/dependencies
   foreach (var e in ex.LoaderExceptions)
     Console.WriteLine(e);
   throw;
-}
-catch (Exception ex)
-{
+} catch (Exception ex) {
   Console.WriteLine(ex);
   throw;
 }

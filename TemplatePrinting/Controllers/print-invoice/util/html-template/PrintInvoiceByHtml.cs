@@ -7,9 +7,9 @@ namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
   private async Task<ActionResult> PrintInvoiceByHtml(Invoice invoice) {
     var outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName, "pdf");
-    _logger.LogInformation("Creating file: {outputFile} \n", outputFile);
+    logger.LogInformation("Creating file: {outputFile} \n", outputFile);
 
-    _logger.LogInformation("printing using Html template");
+    logger.LogInformation("printing using Html template");
     var pt = new PerfTimer("time to parse invoice");
     var html = ParseHtmlTemplate(invoice);
 

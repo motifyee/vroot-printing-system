@@ -23,15 +23,22 @@ public partial class PrintInvoiceController {
     string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
 
     // Get encryption password if encryption is enabled
-    string? encryptionPassword = _util.EncryptionPassword;
+    string? encryptionPassword = util.EncryptionPassword;
 
     ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice, encryptionPassword);
 
-    var stampAsset = GetPrintStampAsset(invoice.PrinterName);
+    var (asset, info) = GetPrintStampAssetAndInfo(invoice.PrinterName);
+    if (info == null) return;
 
-    ExcelUtils.AddPrintStamp(outputFile, _resources.GetBytes(stampAsset), encryptionPassword);
+    ExcelUtils.AddPrintStamp(
+      filePath: outputFile,
+      imageBytes: resources.GetBytes(asset),
+      width: info.Width,
+      height: info.Height,
+      encryptionPassword: encryptionPassword
+    );
 
-    if (!_hostEnv.IsProduction()) return;
+    if (!hostEnvironment.IsProduction()) return;
 
     if (useSpirePrinter)
       SpireUtils.PrintExcelFile(outputFile, invoice.PrinterName);

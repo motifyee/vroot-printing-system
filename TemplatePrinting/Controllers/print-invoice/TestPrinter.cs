@@ -30,19 +30,26 @@ public partial class PrintInvoiceController {
 
       ExcelUtils.CreateOutputExcel(outputFile, templateFile, new { request.PrinterName });
 
-      var stampAsset = GetPrintStampAsset(request.PrinterName);
+      var (asset, info) = GetPrintStampAssetAndInfo(request.PrinterName);
+      if (info != null) {
+        ExcelUtils.AddPrintStamp(
+          filePath: outputFile,
+          imageBytes: resources.GetBytes(asset),
+          width: info.Width,
+          height: info.Height,
+          stampRowIndex: "A10"
+        );
+      }
 
-      ExcelUtils.AddPrintStamp(outputFile, _resources.GetBytes(stampAsset), "A10");
-
-      if (_util.Settings?.UseSpireExcelPrinter ?? false)
+      if (util.Settings?.UseSpireExcelPrinter ?? false)
         SpireUtils.PrintExcelFile(outputFile, request.PrinterName);
       else InteropUtils.PrintExcelFile(outputFile, request.PrinterName);
 
-      _logger.LogInformation("Sending test Excel page to printer: {PrinterName}", request.PrinterName);
+      logger.LogInformation("Sending test Excel page to printer: {PrinterName}", request.PrinterName);
 
       return Ok(new { message = $"Test page (Excel) sent to {request.PrinterName}" });
     } catch (Exception e) {
-      _logger.LogError(e, "Error sending test page to printer {PrinterName}", request.PrinterName);
+      logger.LogError(e, "Error sending test page to printer {PrinterName}", request.PrinterName);
       return StatusCode(500, new { error = e.Message });
     }
   }
